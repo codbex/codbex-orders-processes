@@ -97,11 +97,11 @@ function resolveAddress(
     addressType: number,
     cityDao: any,
     customerAddressDao: any
-): { Id: number } | null {
+): { id: number } | null {
     if (!address) return null;
 
     if (address.id) {
-        return { Id: address.id };
+        return { id: address.id };
     }
 
     const {
@@ -135,5 +135,5 @@ function resolveAddress(
         IsActive: false
     });
 
-    return { Id: newAddress.Id };
+    return { id: newAddress.Id };
 }
