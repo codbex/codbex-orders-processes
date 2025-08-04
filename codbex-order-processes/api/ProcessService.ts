@@ -28,6 +28,7 @@ class ProcessService {
 
     @Post("/order")
     public startCheckout(entity: any) {
+
         const date = new Date();
         const dueDate = new Date(date);
         dueDate.setMonth(date.getMonth() + 1);
@@ -40,38 +41,40 @@ class ProcessService {
             }
         });
 
-        const shippingAddress = resolveAddress(entity.address?.shippingAddress, 1, this.cityDao, this.customerAddressDao);
-        const billingAddress = resolveAddress(entity.address?.billingAddress, 2, this.cityDao, this.customerAddressDao);
+        const shippingAddress = resolveAddress(entity.shippingAddress, 1, this.cityDao, this.customerAddressDao);
+        const billingAddress = resolveAddress(entity.billingAddress, 2, this.cityDao, this.customerAddressDao);
 
         const orderId = this.salesOrderDao.count();
 
         const order = {
             Id: orderId + 1,
-            Date: date,
-            Due: dueDate,
-            // Customer: from auth
-            BillingAddress: billingAddress.Id,
-            ShippingAddress: shippingAddress.Id,
+            Date: date.toLocaleDateString(),
+            Due: dueDate.toLocaleDateString(),
+            Customer: 1,
+            BillingAddress: billingAddress,
+            ShippingAddress: shippingAddress,
             Currency: 2,
             Conditions: entity.notes,
-            SentMethod: sentMethod[0]?.Id,
+            SentMethod: sentMethod[0].Id,
             Status: 1,
             Operator: 1,
-            // Company: 1,
-            // Store: 1
+            Company: 1,
+            Store: 1
         };
 
         const savedOrder = this.salesOrderDao.create(order);
 
         entity.items.forEach((item) => {
-            createSalesOrderItems(item, this.salesOrderItemDao, this.productDao);
+            const soItem = createSalesOrderItems(item, this.salesOrderItemDao, this.productDao, orderId + 1);
+
+            this.salesOrderItemDao.create(soItem);
         });
 
         return savedOrder;
     }
 }
 
-function createSalesOrderItems(item: any, salesOrderItemDao: SalesOrderItemDao, productDao: ProductDao) {
+function createSalesOrderItems(item: any, salesOrderItemDao: SalesOrderItemDao, productDao: ProductDao, orderId: number) {
 
     const product = productDao.findAll({
         $filter: {
@@ -81,15 +84,21 @@ function createSalesOrderItems(item: any, salesOrderItemDao: SalesOrderItemDao, 
         }
     });
 
+    const itemId = salesOrderItemDao.count();
+
     const salesOrderItem =
     {
+        Id: itemId,
         Product: Number(item.productId),
         Quantity: item.quantity,
         Price: product[0].Price,
         VATRate: 20,
+        SalesOrder: orderId,
+        UoM: product[0].BaseUnit,
+        Status: 1
     }
 
-    return salesOrderItemDao.create(salesOrderItem);
+    return salesOrderItem;
 }
 
 function resolveAddress(
@@ -124,7 +133,10 @@ function resolveAddress(
         throw new Error(`City not found: ${city}`);
     }
 
+    const addressId = customerAddressDao.count();
+
     const newAddress = customerAddressDao.create({
+        Id: addressId,
         Customer: 1,
         Country: country,
         City: cityEntity[0].Id,
@@ -135,5 +147,6 @@ function resolveAddress(
         IsActive: false
     });
 
-    return { id: newAddress.Id };
+    return newAddress;
 }
+
