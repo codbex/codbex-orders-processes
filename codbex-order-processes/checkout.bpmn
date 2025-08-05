@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef" exporter="Flowable Open Source Modeler" exporterVersion="6.8.1">
-  <process id="send-returned-" name="Checkout Process" isExecutable="true">
+  <process id="checkout-process" name="Checkout Process" isExecutable="true">
     <startEvent id="start-event"/>
     <serviceTask id="create-order" name="Create Order" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
@@ -154,8 +154,8 @@
     <sequenceFlow id="sid-E2453B98-AA02-4E4B-82D7-0DECFBA82D10" sourceRef="send-timeout-email" targetRef="end-event"/>
     <sequenceFlow id="sid-32D93C47-305E-4675-861A-108F8E1D9B52" sourceRef="send-cancel-email" targetRef="end-event"/>
   </process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_send-returned-">
-    <bpmndi:BPMNPlane bpmnElement="send-returned-" id="BPMNPlane_send-returned-">
+  <bpmndi:BPMNDiagram id="BPMNDiagram_checkout-process">
+    <bpmndi:BPMNPlane bpmnElement="checkout-process" id="BPMNPlane_checkout-process">
       <bpmndi:BPMNShape bpmnElement="start-event" id="BPMNShape_start-event">
         <omgdc:Bounds height="30.0" width="30.0" x="140.0" y="55.0"/>
       </bpmndi:BPMNShape>
