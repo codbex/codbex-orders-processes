@@ -1,7 +1,7 @@
 import { SalesOrderRepository as SalesOrderDao } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderRepository";
 import { SalesOrderItemRepository as SalesOrderItemDao } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderItemRepository";
 
-import { Controller, Post, response } from "sdk/http";
+import { Controller, Post } from "sdk/http";
 
 @Controller
 class FinishOrderService {
@@ -37,9 +37,5 @@ class FinishOrderService {
             item.Status = 4;
             this.salesOrderItemDao.update(item);
         });
-
-    } catch(e: any) {
-        response.setStatus(response.BAD_REQUEST);
-        return { error: e.message };
     }
 }

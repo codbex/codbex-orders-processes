@@ -2,7 +2,7 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
     const orderId = 1;
 
     const updateOrderUrl =
-        "/services/ts/codbex-order-processes/forms/cancel-order/api/CancelOrderService.ts/finishOrder";
+        "/services/ts/codbex-order-processes/forms/finish-order/api/FinishOrderService.ts/finishOrder";
 
     $scope.finishOrder = () => {
 
