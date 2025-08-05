@@ -5,7 +5,7 @@
     <serviceTask id="create-order" name="Create Order" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/create-order.ts]]></flowable:string>
+          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/create-order.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -220,7 +220,7 @@
         <omgdc:Bounds height="80.0" width="100.0" x="270.5" y="970.0"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="send-timeout-email" id="BPMNShape_send-timeout-email">
-        <omgdc:Bounds height="80.0" width="100.0" x="270.5" y="1113.9000244140625"/>
+        <omgdc:Bounds height="80.0" width="100.0" x="270.0" y="1110.0"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="timeout-order" id="BPMNShape_timeout-order">
         <omgdc:Bounds height="80.0" width="100.0" x="270.5" y="835.0"/>
@@ -274,7 +274,7 @@
         <omgdi:waypoint x="674.9499999999999" y="725.0"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-E2453B98-AA02-4E4B-82D7-0DECFBA82D10" id="BPMNEdge_sid-E2453B98-AA02-4E4B-82D7-0DECFBA82D10" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
-        <omgdi:waypoint x="320.30970499861206" y="1193.8500244140625"/>
+        <omgdi:waypoint x="320.0" y="1189.95"/>
         <omgdi:waypoint x="320.0" y="1259.0"/>
         <omgdi:waypoint x="1070.0" y="1259.0"/>
       </bpmndi:BPMNEdge>
@@ -333,8 +333,8 @@
         <omgdi:waypoint x="380.0" y="185.0"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-1587D35F-1B9D-4457-BC5E-6E835B360018" id="BPMNEdge_sid-1587D35F-1B9D-4457-BC5E-6E835B360018" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="320.5" y="1049.95"/>
-        <omgdi:waypoint x="320.5" y="1113.9000244140625"/>
+        <omgdi:waypoint x="320.35714285714283" y="1049.95"/>
+        <omgdi:waypoint x="320.1426785714286" y="1110.0"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-B0148703-C303-4217-AD5E-01638ABA4622" id="BPMNEdge_sid-B0148703-C303-4217-AD5E-01638ABA4622" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="644.9439582070356" y="315.0"/>

@@ -1,7 +1,7 @@
 import { SentMethodRepository } from "codbex-methods/gen/codbex-methods/dao/Settings/SentMethodRepository";
 import { CustomerAddressRepository } from "codbex-partners/gen/codbex-partners/dao/Customers/CustomerAddressRepository";
 import { SalesOrderRepository } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderRepository";
-import { SalesOrderItemRepository } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderItemRepository";
+import { SalesOrderItemRepository, SalesOrderItemEntity, SalesOrderItemCreateEntity } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderItemRepository";
 import { CityRepository } from "codbex-cities/gen/codbex-cities/dao/Settings/CityRepository";
 import { ProductRepository } from "codbex-products/gen/codbex-products/dao/Products/ProductRepository";
 
@@ -52,13 +52,29 @@ function startCheckout(entity: any) {
 
     const savedOrder = salesOrderDao.create(order);
 
-    entity.items.forEach((item) => {
-        const soItem = createSalesOrderItems(item, productDao, savedOrder);
+    const salesOrderItems: SalesOrderItemEntity[] = [];
+
+    entity.items.forEach((item: SalesOrderItemCreateEntity) => {
+        const soItem: SalesOrderItemCreateEntity = createSalesOrderItems(item, productDao, savedOrder);
+
+        salesOrderItems.push(soItem);
 
         salesOrderItemDao.create(soItem);
     });
 
-    return savedOrder;
+    const fullOrder = {
+        ...order,
+        Id: savedOrder
+    };
+
+    console.log(JSON.stringify(fullOrder));
+    console.log("items");
+    console.log(JSON.stringify(salesOrderItems));
+
+    return {
+        fullOrder,
+        salesOrderItems
+    };
 }
 
 function createSalesOrderItems(item: any, productDao: ProductRepository, orderId: number) {
@@ -71,11 +87,11 @@ function createSalesOrderItems(item: any, productDao: ProductRepository, orderId
         }
     });
 
-    const salesOrderItem =
+    const salesOrderItem: SalesOrderItemCreateEntity =
     {
         Product: Number(item.productId),
         Quantity: item.quantity,
-        Price: product[0].Price,
+        Price: product[0].Price | 0,
         VATRate: 20,
         SalesOrder: orderId,
         UoM: product[0].BaseUnit,
