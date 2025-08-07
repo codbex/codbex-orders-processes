@@ -8,11 +8,11 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
     const orderId = 1;
 
     const approveOrderUrl =
-        "/services/ts/codbex-order-processes/forms/review-order/api/ReviewOrderService.ts/approveOrder";
+        "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/approveOrder";
     const rejectOrderUrl =
-        "/services/ts/codbex-order-processes/forms/review-order/api/ReviewOrderService.ts/rejectOrder";
+        "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/rejectOrder";
     const getOrderUrl =
-        "/services/ts/codbex-order-processes/forms/review-order/api/ReviewOrderService.ts/getOrder/" + orderId;
+        "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/getOrder/" + orderId;
 
     $http.get(getOrderUrl)
         .then(response => {

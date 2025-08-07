@@ -8,9 +8,9 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
     const orderId = 1;
 
     const updateOrderUrl =
-        "/services/ts/codbex-order-processes/forms/cancel-order/api/CancelOrderService.ts/cancelOrder";
+        "/services/ts/codbex-orders-processes/forms/cancel-order/api/CancelOrderService.ts/cancelOrder";
     const getOrderUrl =
-        "/services/ts/codbex-order-processes/forms/cancel-order/api/CancelOrderService.ts/getOrder/" + orderId;
+        "/services/ts/codbex-orders-processes/forms/cancel-order/api/CancelOrderService.ts/getOrder/" + orderId;
 
     $http.get(getOrderUrl)
         .then(response => {

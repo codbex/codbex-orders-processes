@@ -1,5 +1,5 @@
 import { Process } from "sdk/bpm";
-import { sendMail } from "codbex-order-processes/utils/mail-utils";
+import { sendMail } from "codbex-orders-processes/utils/mail-utils";
 
 const executionContext = Process.getExecutionContext();
 
