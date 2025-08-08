@@ -5,19 +5,19 @@
     <serviceTask id="create-order" name="Create Order" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/create-order.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/create-order.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
     <endEvent id="end-event"/>
     <sequenceFlow id="sid-2469AB8B-B088-4DD5-8714-7501E28746F6" sourceRef="start-event" targetRef="create-order"/>
-    <userTask id="review-order" name="Review Order" flowable:async="true" flowable:candidateGroups="ADMINISTRATOR" flowable:formKey="/services/web/codbex-order-processes/forms/review-order/index.html"/>
+    <userTask id="review-order" name="Review Order" flowable:async="true" flowable:candidateGroups="ADMINISTRATOR" flowable:formKey="/services/web/codbex-orders-processes/forms/review-order/index.html"/>
     <exclusiveGateway id="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" flowable:async="true" default="sid-B0148703-C303-4217-AD5E-01638ABA4622"/>
-    <userTask id="ship-order" name="Ship Order" flowable:async="true" flowable:candidateGroups="ADMINISTRATOR" flowable:formKey="/services/web/codbex-order-processes/forms/ship-order/index.html"/>
+    <userTask id="ship-order" name="Ship Order" flowable:async="true" flowable:candidateGroups="ADMINISTRATOR" flowable:formKey="/services/web/codbex-orders-processes/forms/ship-order/index.html"/>
     <serviceTask id="reject-order" name="Reject Order" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/reject-order.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/reject-order.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -25,7 +25,7 @@
     <serviceTask id="send-reject-email" name="Send Reject Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/send-reject-email.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/send-reject-email.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -34,24 +34,24 @@
     <serviceTask id="send-approve-email" name="Send Approve Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/send-approve-email.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/send-approve-email.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
     <serviceTask id="send-ship-email" name="Send Ship Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/send-ship-email.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/send-ship-email.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
-    <userTask id="finish-order" name="Finish Order" flowable:async="true" flowable:candidateGroups="ADMINISTRATOR" flowable:formKey="/services/web/codbex-order-processes/forms/finish-order/index.html"/>
+    <userTask id="finish-order" name="Finish Order" flowable:async="true" flowable:candidateGroups="ADMINISTRATOR" flowable:formKey="/services/web/codbex-orders-processes/forms/finish-order/index.html"/>
     <exclusiveGateway id="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" flowable:async="true" default="sid-4C10133C-57AE-40F7-891C-BC71B3C6189C"/>
     <sequenceFlow id="sid-F7BDE914-F27A-4E1A-A8B5-C4ED0DB34694" sourceRef="finish-order" targetRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202"/>
     <serviceTask id="paid-order" name="Paid Order" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/paid-order.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/paid-order.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -59,7 +59,7 @@
     <serviceTask id="send-paid-email" name="Send Paid Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/send-paid-email.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/send-paid-email.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -68,7 +68,7 @@
     <serviceTask id="returned-order" name="Returned Order" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/returned-order.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/returned-order.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -78,7 +78,7 @@
     <serviceTask id="send-returned-email" name="Send Returned Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/send-returned-email.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/send-returned-email.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -90,7 +90,7 @@
     <serviceTask id="send-waiting-email" name="Send Waiting Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/send-waiting-email.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/send-waiting-email.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -107,21 +107,21 @@
     <serviceTask id="notify-seller" name="Notify Seller" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/notify-seller.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/notify-seller.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
     <serviceTask id="send-timeout-email" name="Send Timeout Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/send-timeout-email.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/send-timeout-email.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
     <serviceTask id="timeout-order" name="Timeout Order" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/timeout-order.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/timeout-order.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -129,7 +129,7 @@
     <sequenceFlow id="sid-FAE39430-2601-441A-A9F5-79CAD8072F52" sourceRef="timeout-order" targetRef="notify-seller"/>
     <sequenceFlow id="sid-1587D35F-1B9D-4457-BC5E-6E835B360018" sourceRef="notify-seller" targetRef="send-timeout-email"/>
     <sequenceFlow id="sid-19CD8EF0-2805-464C-91B7-B6D6490285D7" sourceRef="send-returned-email" targetRef="end-event"/>
-    <userTask id="cancel-order-form" name="Cancel Order Form" flowable:async="true" flowable:candidateGroups="ADMINISTRATOR" flowable:formKey="/services/web/codbex-order-processes/forms/cancel-order/index.html"/>
+    <userTask id="cancel-order-form" name="Cancel Order Form" flowable:async="true" flowable:candidateGroups="ADMINISTRATOR" flowable:formKey="/services/web/codbex-orders-processes/forms/cancel-order/index.html"/>
     <parallelGateway id="sid-6A08B68B-44A5-4B5D-9AE7-543EBA6C7E5E" flowable:async="true"/>
     <sequenceFlow id="sid-2886BE84-6A21-4461-9712-25C6AACC24C8" sourceRef="create-order" targetRef="sid-6A08B68B-44A5-4B5D-9AE7-543EBA6C7E5E"/>
     <sequenceFlow id="sid-3E37AB0E-A0AE-4A96-B2F0-69187F8C145D" sourceRef="sid-6A08B68B-44A5-4B5D-9AE7-543EBA6C7E5E" targetRef="review-order"/>
@@ -137,7 +137,7 @@
     <serviceTask id="cancel-order" name="Cancel Order" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/cancel-order.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/cancel-order.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
@@ -145,7 +145,7 @@
     <serviceTask id="send-cancel-email" name="Send Cancel Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
-          <flowable:string><![CDATA[codbex-order-processes/tasks/checkout-process/send-cancel-email.js]]></flowable:string>
+          <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/send-cancel-email.js]]></flowable:string>
         </flowable:field>
       </extensionElements>
     </serviceTask>
