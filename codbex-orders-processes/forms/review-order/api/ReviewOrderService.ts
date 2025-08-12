@@ -3,6 +3,7 @@ import { SalesOrderItemRepository as SalesOrderItemDao } from "codbex-orders/gen
 import { CustomerRepository as CustomerDao } from "codbex-partners/gen/codbex-partners/dao/Customers/CustomerRepository";
 
 import { Controller, Post, Get } from "sdk/http";
+import { Tasks } from 'sdk/bpm';
 
 @Controller
 class ReviewOrderService {
@@ -17,10 +18,12 @@ class ReviewOrderService {
         this.customerDao = new CustomerDao();
     }
 
-    @Get("/getOrder/:orderId")
-    public salesOrderData(ctx: any) {
+    @Get("/getOrder/:taskId")
+    public salesOrderData(_: any, ctx: any) {
 
-        const orderId = ctx.pathParameters.orderId;
+        const taskId = ctx.pathParameters.taskId;
+
+        const orderId = Tasks.getVariable(taskId, "orderId");
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
@@ -49,8 +52,10 @@ class ReviewOrderService {
         };
     }
 
-    @Post("/approveOrder")
+    @Post("/approveOrder/:taskId")
     public approveOrder(orderId: number) {
+
+        const taskId = ctx.pathParameters.taskId;
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
@@ -69,13 +74,13 @@ class ReviewOrderService {
         });
 
         orderItems.forEach(item => {
-            item.Status = 2;
+            item.Status = 2; // Approved
             this.salesOrderItemDao.update(item);
         });
 
     }
 
-    @Post("/rejectOrder")
+    @Post("/rejectOrder/:taskId")
     public rejectOrder(orderId: number) {
 
         const salesOrders = this.salesOrderDao.findAll({
@@ -95,7 +100,7 @@ class ReviewOrderService {
         });
 
         orderItems.forEach(item => {
-            item.Status = 6;
+            item.Status = 6; // Rejected
             this.salesOrderItemDao.update(item);
         });
 

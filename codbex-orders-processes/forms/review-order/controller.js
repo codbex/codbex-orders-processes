@@ -1,5 +1,9 @@
 angular.module('templateApp', ['blimpKit', 'platformView']).controller('templateController', ($scope, $http) => {
 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const taskId = urlParams.get('taskId');
+
     $scope.entity = {};
     $scope.forms = {
         details: {},
@@ -8,11 +12,11 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
     const orderId = 1;
 
     const approveOrderUrl =
-        "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/approveOrder";
+        "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/approveOrder/" + taskId;
     const rejectOrderUrl =
-        "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/rejectOrder";
+        "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/rejectOrder/" + taskId;
     const getOrderUrl =
-        "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/getOrder/" + orderId;
+        "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/getOrder/" + taskId;
 
     $http.get(getOrderUrl)
         .then(response => {
