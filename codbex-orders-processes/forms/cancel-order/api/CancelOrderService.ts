@@ -3,6 +3,7 @@ import { SalesOrderItemRepository as SalesOrderItemDao } from "codbex-orders/gen
 import { CustomerRepository as CustomerDao } from "codbex-partners/gen/codbex-partners/dao/Customers/CustomerRepository";
 
 import { Controller, Get, Post, response } from "sdk/http";
+import { Tasks } from 'sdk/bpm';
 
 @Controller
 class CancelOrderService {
@@ -17,10 +18,12 @@ class CancelOrderService {
         this.salesOrderItemDao = new SalesOrderItemDao();
     }
 
-    @Get("/getOrder/:orderId")
+    @Get("/getOrder/:taskId")
     public salesOrderData(ctx: any) {
 
-        const orderId = ctx.pathParameters.orderId;
+        const taskId = ctx.pathParameters.taskId;
+
+        const orderId = Tasks.getVariable(taskId, "orderId");
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
@@ -44,13 +47,16 @@ class CancelOrderService {
         };
     }
 
-    @Post("/cancelOrder")
-    public cancelOrder(body: any) {
+    @Post("/cancelOrder/:taskId")
+    public cancelOrder(body: any, ctx: any) {
+
+        const taskId = ctx.pathParameters.taskId;
+        const orderId = Tasks.getVariable(taskId, "orderId");
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
                 equals: {
-                    Id: body.Id
+                    Id: orderId
                 }
             }
         });
@@ -75,6 +81,8 @@ class CancelOrderService {
                 item.Status = 5;
                 this.salesOrderItemDao.update(item);
             });
+
+            Tasks.complete(taskId);
 
         } catch (e: any) {
             response.setStatus(response.BAD_REQUEST);

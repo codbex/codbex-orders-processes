@@ -1,7 +1,7 @@
 import { SentMethodRepository } from "codbex-methods/gen/codbex-methods/dao/Settings/SentMethodRepository";
 import { CustomerAddressRepository } from "codbex-partners/gen/codbex-partners/dao/Customers/CustomerAddressRepository";
 import { SalesOrderRepository } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderRepository";
-import { SalesOrderItemRepository, SalesOrderItemEntity, SalesOrderItemCreateEntity } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderItemRepository";
+import { SalesOrderItemRepository, SalesOrderItemCreateEntity } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderItemRepository";
 import { CityRepository } from "codbex-cities/gen/codbex-cities/dao/Settings/CityRepository";
 import { ProductRepository } from "codbex-products/gen/codbex-products/dao/Products/ProductRepository";
 

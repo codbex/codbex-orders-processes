@@ -1,12 +1,15 @@
 angular.module('templateApp', ['blimpKit', 'platformView']).controller('templateController', ($scope, $http) => {
-    const orderId = 1;
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const taskId = urlParams.get('taskId');
 
     const updateOrderUrl =
-        "/services/ts/codbex-orders-processes/forms/finish-order/api/FinishOrderService.ts/finishOrder";
+        "/services/ts/codbex-orders-processes/forms/finish-order/api/FinishOrderService.ts/finishOrder/" + taskId;
 
     $scope.finishOrder = () => {
 
-        $http.post(updateOrderUrl, orderId)
+        $http.post(updateOrderUrl)
             .then(response => {
                 if (response.status == 201) {
                 }

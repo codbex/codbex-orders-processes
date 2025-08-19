@@ -53,9 +53,11 @@ class ReviewOrderService {
     }
 
     @Post("/approveOrder/:taskId")
-    public approveOrder(orderId: number) {
+    public approveOrder(_: any, ctx: any) {
 
         const taskId = ctx.pathParameters.taskId;
+
+        const orderId = Tasks.getVariable(taskId, "orderId");
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
@@ -78,10 +80,15 @@ class ReviewOrderService {
             this.salesOrderItemDao.update(item);
         });
 
+        Tasks.complete(taskId);
     }
 
     @Post("/rejectOrder/:taskId")
-    public rejectOrder(orderId: number) {
+    public rejectOrder(_: any, ctx: any) {
+
+        const taskId = ctx.pathParameters.taskId;
+
+        const orderId = Tasks.getVariable(taskId, "orderId");
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
@@ -104,5 +111,6 @@ class ReviewOrderService {
             this.salesOrderItemDao.update(item);
         });
 
+        Tasks.complete(taskId);
     }
 }

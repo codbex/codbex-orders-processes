@@ -2,6 +2,7 @@ import { SalesOrderRepository as SalesOrderDao } from "codbex-orders/gen/codbex-
 import { SalesOrderItemRepository as SalesOrderItemDao } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderItemRepository";
 
 import { Controller, Post } from "sdk/http";
+import { Tasks } from 'sdk/bpm';
 
 @Controller
 class FinishOrderService {
@@ -14,8 +15,12 @@ class FinishOrderService {
         this.salesOrderItemDao = new SalesOrderItemDao();
     }
 
-    @Post("/finishOrder")
-    public finishOrder(orderId: number) {
+    @Post("/finishOrder/:taskId")
+    public finishOrder(_: any, ctx: any) {
+
+        const taskId = ctx.pathParameters.taskId;
+
+        const orderId = Tasks.getVariable(taskId, "orderId");
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
@@ -37,5 +42,7 @@ class FinishOrderService {
             item.Status = 4;
             this.salesOrderItemDao.update(item);
         });
+
+        Tasks.complete(taskId);
     }
 }

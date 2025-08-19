@@ -9,8 +9,6 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
         details: {},
     };
 
-    const orderId = 1;
-
     const approveOrderUrl =
         "/services/ts/codbex-orders-processes/forms/review-order/api/ReviewOrderService.ts/approveOrder/" + taskId;
     const rejectOrderUrl =
@@ -30,7 +28,7 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
         });
 
     $scope.approveOrder = () => {
-        $http.post(approveOrderUrl, orderId)
+        $http.post(approveOrderUrl)
             .then(response => {
                 if (response.status == 201) {
                 }
@@ -44,7 +42,7 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
     }
 
     $scope.rejectOrder = () => {
-        $http.post(rejectOrderUrl, orderId)
+        $http.post(rejectOrderUrl)
             .then(response => {
                 if (response.status == 201) {
                 }
