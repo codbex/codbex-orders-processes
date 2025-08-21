@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:flowable="http://flowable.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef" exporter="Flowable Open Source Modeler" exporterVersion="6.8.1">
+  <message id="cancel-process" name="cancel-process"/>
   <process id="checkout-process" name="Checkout Process" isExecutable="true">
     <startEvent id="start-event"/>
     <endEvent id="end-event"/>
@@ -32,7 +33,6 @@
     <userTask id="finish-order" name="Finish Order" flowable:async="true" flowable:candidateGroups="ADMINISTRATOR" flowable:formKey="/services/web/codbex-orders-processes/forms/finish-order/index.html"/>
     <exclusiveGateway id="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" flowable:async="true" default="sid-4C10133C-57AE-40F7-891C-BC71B3C6189C"/>
     <sequenceFlow id="sid-F7BDE914-F27A-4E1A-A8B5-C4ED0DB34694" sourceRef="finish-order" targetRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202"/>
-    <sequenceFlow id="sid-4C10133C-57AE-40F7-891C-BC71B3C6189C" sourceRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" targetRef="send-paid-email"/>
     <serviceTask id="send-paid-email" name="Send Paid Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
@@ -59,7 +59,6 @@
     <exclusiveGateway id="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" flowable:async="true" default="sid-CBC60718-BBE1-48F3-93ED-28750C77E6AE"/>
     <sequenceFlow id="sid-CF3413F5-4E52-450C-BAE2-C77F7762B467" sourceRef="send-approve-email" targetRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8"/>
     <sequenceFlow id="sid-D8686964-86C6-4707-9901-6B200563FD04" sourceRef="ship-order" targetRef="send-ship-email"/>
-    <sequenceFlow id="sid-CBC60718-BBE1-48F3-93ED-28750C77E6AE" sourceRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" targetRef="ship-order"/>
     <serviceTask id="send-waiting-email" name="Send Waiting Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
@@ -94,23 +93,29 @@
     <sequenceFlow id="sid-19CD8EF0-2805-464C-91B7-B6D6490285D7" sourceRef="send-returned-email" targetRef="end-event"/>
     <sequenceFlow id="sid-036AEEF3-D461-4523-978F-38C68C3EDC00" sourceRef="send-reject-email" targetRef="end-event"/>
     <sequenceFlow id="sid-E2453B98-AA02-4E4B-82D7-0DECFBA82D10" sourceRef="send-timeout-email" targetRef="end-event"/>
-    <sequenceFlow id="sid-067E1F93-138D-4F2E-8505-EE2E808C9E9C" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-approve-email">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ status == "Approved" }]]></conditionExpression>
-    </sequenceFlow>
+    <boundaryEvent id="sid-A0DBE1B4-0F46-4952-BFEE-4E04227AFEFB" attachedToRef="finish-order" cancelActivity="true">
+      <timerEventDefinition>
+        <timeDate>{ dueDate }</timeDate>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="sid-56C59576-CEA6-429D-816C-69D4823ED4EA" sourceRef="sid-A0DBE1B4-0F46-4952-BFEE-4E04227AFEFB" targetRef="timeout-order"/>
+    <sequenceFlow id="sid-4187F9B3-1A3C-4B4D-BDA1-C2B0640CE1A8" sourceRef="send-waiting-email" targetRef="finish-order"/>
+    <sequenceFlow id="sid-CBC60718-BBE1-48F3-93ED-28750C77E6AE" sourceRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" targetRef="ship-order"/>
     <sequenceFlow id="sid-A2DAE1B1-6FCE-4F9D-B34C-E949FE6529F1" sourceRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" targetRef="send-waiting-email">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ delivery == "false" }]]></conditionExpression>
     </sequenceFlow>
+    <sequenceFlow id="sid-4C10133C-57AE-40F7-891C-BC71B3C6189C" sourceRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" targetRef="send-paid-email"/>
     <sequenceFlow id="sid-31B74CDB-7BDB-40C9-AC07-E9C4AE3CACE9" sourceRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" targetRef="returned-order">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ returned == "true" }]]></conditionExpression>
     </sequenceFlow>
-    <subProcess id="cancel-process" name="Cancel Process" triggeredByEvent="true">
-      <serviceTask id="cancel-order" name="Cancel Order" flowable:async="true" flowable:delegateExpression="${JSTask}">
-        <extensionElements>
-          <flowable:field name="handler">
-            <flowable:string><![CDATA[codbex-orders-processes/tasks/checkout-process/cancel-order.js]]></flowable:string>
-          </flowable:field>
-        </extensionElements>
-      </serviceTask>
+    <sequenceFlow id="sid-B0148703-C303-4217-AD5E-01638ABA4622" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-reject-email"/>
+    <sequenceFlow id="sid-067E1F93-138D-4F2E-8505-EE2E808C9E9C" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-approve-email">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ status == "Approved" }]]></conditionExpression>
+    </sequenceFlow>
+    <subProcess id="cancel-order-subprocess" name="Cancel Order Subprocess" triggeredByEvent="true">
+      <startEvent id="sid-1ADB616C-A37D-4C00-8DAD-5DB53E231BA3" isInterrupting="true">
+        <messageEventDefinition messageRef="cancel-process"/>
+      </startEvent>
       <serviceTask id="send-cancel-email" name="Send Cancel Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
         <extensionElements>
           <flowable:field name="handler">
@@ -118,29 +123,17 @@
           </flowable:field>
         </extensionElements>
       </serviceTask>
-      <startEvent id="cancel-checkout-event" name="Cancel Checkout Event" isInterrupting="true">
-        <messageEventDefinition/>
-      </startEvent>
-      <endEvent id="sid-CE334A83-5910-475F-8AD5-216513085C8F">
-        <terminateEventDefinition/>
+      <endEvent id="sid-CE4CA2A3-BC21-4E74-A60F-7BCE2F5003ED">
+        <terminateEventDefinition flowable:terminateAll="true"/>
       </endEvent>
-      <sequenceFlow id="sid-E8145390-A7B6-46F8-8F52-B2AACDC289FE" sourceRef="cancel-order" targetRef="send-cancel-email"/>
-      <sequenceFlow id="sid-58D2A951-18CF-4C82-8E19-481866C27BAA" sourceRef="cancel-checkout-event" targetRef="cancel-order"/>
-      <sequenceFlow id="sid-C02A3C64-0584-44B2-9959-D2BB18E85F28" sourceRef="send-cancel-email" targetRef="sid-CE334A83-5910-475F-8AD5-216513085C8F"/>
+      <sequenceFlow id="sid-F0E2A4B5-ED65-4B21-A4DC-3B170013638C" sourceRef="sid-1ADB616C-A37D-4C00-8DAD-5DB53E231BA3" targetRef="send-cancel-email"/>
+      <sequenceFlow id="sid-EEBB11E4-72E7-4626-98F9-ECBD4C5203DF" sourceRef="send-cancel-email" targetRef="sid-CE4CA2A3-BC21-4E74-A60F-7BCE2F5003ED"/>
     </subProcess>
-    <boundaryEvent id="sid-A0DBE1B4-0F46-4952-BFEE-4E04227AFEFB" attachedToRef="finish-order" cancelActivity="true">
-      <timerEventDefinition>
-        <timeDate>{dueDate}</timeDate>
-      </timerEventDefinition>
-    </boundaryEvent>
-    <sequenceFlow id="sid-56C59576-CEA6-429D-816C-69D4823ED4EA" sourceRef="sid-A0DBE1B4-0F46-4952-BFEE-4E04227AFEFB" targetRef="timeout-order"/>
-    <sequenceFlow id="sid-4187F9B3-1A3C-4B4D-BDA1-C2B0640CE1A8" sourceRef="send-waiting-email" targetRef="finish-order"/>
-    <sequenceFlow id="sid-B0148703-C303-4217-AD5E-01638ABA4622" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-reject-email"/>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_checkout-process">
     <bpmndi:BPMNPlane bpmnElement="checkout-process" id="BPMNPlane_checkout-process">
       <bpmndi:BPMNShape bpmnElement="start-event" id="BPMNShape_start-event">
-        <omgdc:Bounds height="30.0" width="30.0" x="420.0" y="190.0"/>
+        <omgdc:Bounds height="30.0" width="30.0" x="445.0" y="190.0"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="end-event" id="BPMNShape_end-event">
         <omgdc:Bounds height="28.0" width="28.0" x="930.0" y="1245.0"/>
@@ -193,23 +186,20 @@
       <bpmndi:BPMNShape bpmnElement="timeout-order" id="BPMNShape_timeout-order">
         <omgdc:Bounds height="80.0" width="100.0" x="270.5" y="835.0"/>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="cancel-process" id="BPMNShape_cancel-process">
-        <omgdc:Bounds height="452.6271000817668" width="200.44127411105288" x="45.0" y="198.68644995911654"/>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="cancel-order" id="BPMNShape_cancel-order">
-        <omgdc:Bounds height="80.0" width="100.0" x="98.00676061625316" y="330.4679833107624"/>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="send-cancel-email" id="BPMNShape_send-cancel-email">
-        <omgdc:Bounds height="80.0" width="100.0" x="98.00676061625325" y="464.4955440723831"/>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="cancel-checkout-event" id="BPMNShape_cancel-checkout-event">
-        <omgdc:Bounds height="30.0" width="30.5" x="132.75676061625316" y="246.70075783474948"/>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="sid-CE334A83-5910-475F-8AD5-216513085C8F" id="BPMNShape_sid-CE334A83-5910-475F-8AD5-216513085C8F">
-        <omgdc:Bounds height="28.0" width="28.0" x="134.00676061625325" y="598.5231048340038"/>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="sid-A0DBE1B4-0F46-4952-BFEE-4E04227AFEFB" id="BPMNShape_sid-A0DBE1B4-0F46-4952-BFEE-4E04227AFEFB">
         <omgdc:Bounds height="31.0" width="31.0" x="394.5" y="745.5"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="cancel-order-subprocess" id="BPMNShape_cancel-order-subprocess">
+        <omgdc:Bounds height="329.0" width="198.0" x="32.0" y="362.29998779296875"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-1ADB616C-A37D-4C00-8DAD-5DB53E231BA3" id="BPMNShape_sid-1ADB616C-A37D-4C00-8DAD-5DB53E231BA3">
+        <omgdc:Bounds height="30.0" width="30.5" x="115.75" y="420.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="send-cancel-email" id="BPMNShape_send-cancel-email">
+        <omgdc:Bounds height="80.0" width="100.0" x="81.0" y="505.8000030517578"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sid-CE4CA2A3-BC21-4E74-A60F-7BCE2F5003ED" id="BPMNShape_sid-CE4CA2A3-BC21-4E74-A60F-7BCE2F5003ED">
+        <omgdc:Bounds height="28.0" width="28.0" x="117.0" y="645.0"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="sid-19CD8EF0-2805-464C-91B7-B6D6490285D7" id="BPMNEdge_sid-19CD8EF0-2805-464C-91B7-B6D6490285D7" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
         <omgdi:waypoint x="674.9499999999838" y="1153.7589547566859"/>
@@ -221,21 +211,21 @@
         <omgdi:waypoint x="320.0" y="761.0"/>
         <omgdi:waypoint x="320.32456140350877" y="835.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="sid-58D2A951-18CF-4C82-8E19-481866C27BAA" id="BPMNEdge_sid-58D2A951-18CF-4C82-8E19-481866C27BAA" flowable:sourceDockerX="15.25" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="148.00676061625316" y="276.65075634075737"/>
-        <omgdi:waypoint x="148.00676061625316" y="330.4679833107624"/>
+      <bpmndi:BPMNEdge bpmnElement="sid-4C10133C-57AE-40F7-891C-BC71B3C6189C" id="BPMNEdge_sid-4C10133C-57AE-40F7-891C-BC71B3C6189C" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="644.9439582071469" y="875.0"/>
+        <omgdi:waypoint x="740.0" y="875.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="sid-4C10133C-57AE-40F7-891C-BC71B3C6189C" id="BPMNEdge_sid-4C10133C-57AE-40F7-891C-BC71B3C6189C" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="1.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="644.9414082687338" y="875.0"/>
-        <omgdi:waypoint x="739.9999999998975" y="875.0"/>
+      <bpmndi:BPMNEdge bpmnElement="sid-F0E2A4B5-ED65-4B21-A4DC-3B170013638C" id="BPMNEdge_sid-F0E2A4B5-ED65-4B21-A4DC-3B170013638C" flowable:sourceDockerX="15.5" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="131.21615531455413" y="449.9499651269375"/>
+        <omgdi:waypoint x="131.09013988921404" y="505.8000030517578"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="sid-EEBB11E4-72E7-4626-98F9-ECBD4C5203DF" id="BPMNEdge_sid-EEBB11E4-72E7-4626-98F9-ECBD4C5203DF" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
+        <omgdi:waypoint x="131.0" y="585.7500030517579"/>
+        <omgdi:waypoint x="131.0" y="645.0"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-CBC60718-BBE1-48F3-93ED-28750C77E6AE" id="BPMNEdge_sid-CBC60718-BBE1-48F3-93ED-28750C77E6AE" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
         <omgdi:waypoint x="644.9439582070584" y="545.8000030517578"/>
         <omgdi:waypoint x="739.9999999997401" y="545.8000030517578"/>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="sid-C02A3C64-0584-44B2-9959-D2BB18E85F28" id="BPMNEdge_sid-C02A3C64-0584-44B2-9959-D2BB18E85F28" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
-        <omgdi:waypoint x="148.00676061625325" y="544.4455440723831"/>
-        <omgdi:waypoint x="148.00676061625325" y="598.5231048340038"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-69B50F79-3628-44DC-9503-444E0CEF7D5C" id="BPMNEdge_sid-69B50F79-3628-44DC-9503-444E0CEF7D5C" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
         <omgdi:waypoint x="839.9499999999999" y="875.0"/>
@@ -275,9 +265,9 @@
         <omgdi:waypoint x="739.9999999996369" y="725.0"/>
         <omgdi:waypoint x="509.9499999987209" y="725.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="sid-B0148703-C303-4217-AD5E-01638ABA4622" id="BPMNEdge_sid-B0148703-C303-4217-AD5E-01638ABA4622" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="1.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="644.9414082686325" y="315.0"/>
-        <omgdi:waypoint x="740.0" y="315.0"/>
+      <bpmndi:BPMNEdge bpmnElement="sid-B0148703-C303-4217-AD5E-01638ABA4622" id="BPMNEdge_sid-B0148703-C303-4217-AD5E-01638ABA4622" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="644.9439582070356" y="315.0"/>
+        <omgdi:waypoint x="739.9999999999847" y="315.0"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-E2453B98-AA02-4E4B-82D7-0DECFBA82D10" id="BPMNEdge_sid-E2453B98-AA02-4E4B-82D7-0DECFBA82D10" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="14.0" flowable:targetDockerY="14.0">
         <omgdi:waypoint x="320.0" y="1189.95"/>
@@ -292,12 +282,8 @@
         <omgdi:waypoint x="790.0" y="585.7500030517579"/>
         <omgdi:waypoint x="790.0" y="685.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="sid-E8145390-A7B6-46F8-8F52-B2AACDC289FE" id="BPMNEdge_sid-E8145390-A7B6-46F8-8F52-B2AACDC289FE" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="148.0067606162532" y="410.41798331076245"/>
-        <omgdi:waypoint x="148.00676061625322" y="464.4955440723831"/>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-2469AB8B-B088-4DD5-8714-7501E28746F6" id="BPMNEdge_sid-2469AB8B-B088-4DD5-8714-7501E28746F6" flowable:sourceDockerX="15.0" flowable:sourceDockerY="15.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
-        <omgdi:waypoint x="449.94999949366627" y="205.0"/>
+        <omgdi:waypoint x="474.94999932866256" y="205.0"/>
         <omgdi:waypoint x="575.0" y="205.0"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-FAE39430-2601-441A-A9F5-79CAD8072F52" id="BPMNEdge_sid-FAE39430-2601-441A-A9F5-79CAD8072F52" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">

@@ -32,10 +32,15 @@ class ProcessService {
             }
         });
 
+        if (sentMethod.length < 1) {
+            response.setStatus(response.BAD_REQUEST);
+            return "No paymenth method with that name exists!";
+        }
+
         const shippingAddress = this.resolveAddress(entity.shippingAddress, 1, this.cityDao, this.customerAddressDao);
         const billingAddress = this.resolveAddress(entity.billingAddress, 2, this.cityDao, this.customerAddressDao);
 
-        const order = {
+        const savedOrder = this.salesOrderDao.create({
             Date: new Date(date.toISOString()),
             Due: new Date(dueDate.toISOString()),
             Customer: 1,
@@ -44,13 +49,11 @@ class ProcessService {
             Currency: 2,
             Conditions: entity.notes,
             SentMethod: sentMethod[0].Id,
-            Status: 1,
+            Status: 12, // Initial
             Operator: 1,
             Company: 1,
             Store: 1
-        };
-
-        const savedOrder = this.salesOrderDao.create(order);
+        });
 
         const salesOrderItems: SalesOrderItemCreateEntity[] = [];
 
@@ -62,16 +65,18 @@ class ProcessService {
             this.salesOrderItemDao.create(soItem);
         });
 
-        const fullOrder = {
-            ...order,
-            Id: savedOrder
-        };
+        const newOrder = this.salesOrderDao.findById(savedOrder);
 
-        response.setStatus(response.CREATED);
-        return {
-            fullOrder,
-            salesOrderItems
-        };
+        if (newOrder) {
+            newOrder.Status = 1 // New
+            this.salesOrderDao.update(newOrder);
+
+            response.setStatus(response.CREATED);
+            return {
+                newOrder,
+                salesOrderItems
+            };
+        }
     }
 
     private createSalesOrderItems(item: any, productDao: ProductRepository, orderId: number) {
@@ -83,6 +88,11 @@ class ProcessService {
                 }
             }
         });
+
+        if (product.length < 1) {
+            response.setStatus(response.BAD_REQUEST);
+            return `No such product with Id: ${item.productId}!`;
+        }
 
         const salesOrderItem: SalesOrderItemCreateEntity =
         {

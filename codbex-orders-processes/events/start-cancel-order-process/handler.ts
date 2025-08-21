@@ -8,8 +8,8 @@ export function onMessage(message: string) {
     if (messageEvent.operation == 'update') {
         const entity = messageEvent.entity;
 
-        if (entity.Status == 1) {
-            Process.start('checkout-process', undefined, { 'orderId': entity.Id });
+        if (entity.Status == 9) {
+            Process.correlateMessageEvent(entity.Process ?? "1", "cancel-order", new Map<string, any>([["event", true]]);
         }
     }
 }
