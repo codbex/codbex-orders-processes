@@ -6,6 +6,8 @@ import { CityRepository } from "codbex-cities/gen/codbex-cities/dao/Settings/Cit
 import { ProductRepository } from "codbex-products/gen/codbex-products/dao/Products/ProductRepository";
 
 import { Controller, Post, response } from "sdk/http";
+import { user } from 'sdk/security';
+import { query, sql } from 'sdk/db';
 
 @Controller
 class ProcessService {
@@ -20,6 +22,9 @@ class ProcessService {
 
     @Post("/order")
     public startCheckout(entity: any) {
+
+        const loggedCustomer = getCustomerByIdentifier(user.getName());
+
         const date = new Date();
         const dueDate = new Date(date);
         dueDate.setMonth(date.getMonth() + 1);
@@ -43,7 +48,7 @@ class ProcessService {
         const savedOrder = this.salesOrderDao.create({
             Date: new Date(date.toISOString()),
             Due: new Date(dueDate.toISOString()),
-            Customer: 1,
+            Customer: loggedCustomer,
             BillingAddress: billingAddress,
             ShippingAddress: shippingAddress,
             Currency: 2,
@@ -141,7 +146,7 @@ class ProcessService {
         }
 
         const newAddress = customerAddressDao.create({
-            Customer: 1,
+            Customer: getCustomerByIdentifier(user.getName()),
             Country: country,
             City: cityEntity[0].Id,
             AddressLine1: addressLine1,
@@ -155,3 +160,16 @@ class ProcessService {
     }
 }
 
+function getCustomerByIdentifier(identifier: string) {
+
+    const customerQuery = sql.getDialect()
+        .select()
+        .column('CUSTOMER_ID')
+        .from('CODBEX_CUSTOMER')
+        .where('CUSTOMER_IDENTIFIER = ?')
+        .build();
+
+    const queryResult = query.execute(customerQuery, [identifier]);
+
+    return queryResult[0];
+}
