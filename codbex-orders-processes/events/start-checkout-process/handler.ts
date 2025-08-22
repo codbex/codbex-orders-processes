@@ -9,7 +9,11 @@ export function onMessage(message: string) {
         const entity = messageEvent.entity;
 
         if (entity.Status == 1) {
-            Process.start('checkout-process', undefined, { 'orderId': entity.Id });
+            Process.start('checkout-process', undefined, {
+                'orderId': entity.Id,
+                'status': "New"
+            });
+
         }
     }
 }

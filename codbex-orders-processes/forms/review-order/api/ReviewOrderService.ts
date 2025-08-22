@@ -80,6 +80,7 @@ class ReviewOrderService {
             this.salesOrderItemDao.update(item);
         });
 
+        Tasks.setVariable(taskId, "status", "Approved");
         Tasks.complete(taskId);
     }
 
@@ -111,6 +112,7 @@ class ReviewOrderService {
             this.salesOrderItemDao.update(item);
         });
 
+        Tasks.setVariable(taskId, "status", "Rejected");
         Tasks.complete(taskId);
     }
 }
