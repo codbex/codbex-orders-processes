@@ -15,8 +15,8 @@ class FinishOrderService {
         this.salesOrderItemDao = new SalesOrderItemDao();
     }
 
-    @Post("/finishOrder/:taskId")
-    public finishOrder(_: any, ctx: any) {
+    @Post("/payOrder/:taskId")
+    public payOrder(_: any, ctx: any) {
 
         const taskId = ctx.pathParameters.taskId;
 
@@ -30,7 +30,7 @@ class FinishOrderService {
             }
         });
 
-        salesOrders[0].Status = 10;
+        salesOrders[0].Status = 6;
 
         this.salesOrderDao.update(salesOrders[0]);
 
@@ -43,6 +43,40 @@ class FinishOrderService {
             this.salesOrderItemDao.update(item);
         });
 
+        Tasks.setVariable(taskId, "status", "Paid");
         Tasks.complete(taskId);
     }
+
+    @Post("/returnOrder/:taskId")
+    public returnOrder(_: any, ctx: any) {
+
+        const taskId = ctx.pathParameters.taskId;
+
+        const orderId = Tasks.getVariable(taskId, "orderId");
+
+        const salesOrders = this.salesOrderDao.findAll({
+            $filter: {
+                equals: {
+                    Id: orderId
+                }
+            }
+        });
+
+        salesOrders[0].Status = 8;
+
+        this.salesOrderDao.update(salesOrders[0]);
+
+        const orderItems = this.salesOrderItemDao.findAll({
+            $filter: { equals: { SalesOrder: orderId } }
+        });
+
+        orderItems.forEach(item => {
+            item.Status = 7;
+            this.salesOrderItemDao.update(item);
+        });
+
+        Tasks.setVariable(taskId, "status", "Returned");
+        Tasks.complete(taskId);
+    }
+
 }

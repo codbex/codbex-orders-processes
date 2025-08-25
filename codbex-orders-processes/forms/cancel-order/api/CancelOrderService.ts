@@ -82,6 +82,7 @@ class CancelOrderService {
                 this.salesOrderItemDao.update(item);
             });
 
+            Tasks.setVariable(taskId, "status", "Canceled");
             Tasks.complete(taskId);
 
         } catch (e: any) {
