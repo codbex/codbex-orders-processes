@@ -1,0 +1,6 @@
+{
+    "kind": "T",
+    "name": "codbex-orders-SalesOrder-SalesOrder",
+    "handler": "codbex-orders-processes/events/start-checkout-process/handler.ts",
+    "description": "Start Checkout Process - Event"
+}

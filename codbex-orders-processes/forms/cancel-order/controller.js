@@ -1,16 +1,18 @@
 angular.module('templateApp', ['blimpKit', 'platformView']).controller('templateController', ($scope, $http) => {
 
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const taskId = urlParams.get('taskId');
+
     $scope.entity = {};
     $scope.forms = {
         details: {},
     };
 
-    const orderId = 1;
-
     const updateOrderUrl =
-        "/services/ts/codbex-orders-processes/forms/cancel-order/api/CancelOrderService.ts/cancelOrder";
+        "/services/ts/codbex-orders-processes/forms/cancel-order/api/CancelOrderService.ts/cancelOrder/" + taskId;
     const getOrderUrl =
-        "/services/ts/codbex-orders-processes/forms/cancel-order/api/CancelOrderService.ts/getOrder/" + orderId;
+        "/services/ts/codbex-orders-processes/forms/cancel-order/api/CancelOrderService.ts/getOrder/" + taskId;
 
     $http.get(getOrderUrl)
         .then(response => {
@@ -25,7 +27,6 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
     $scope.cancelOrder = () => {
 
         const orderBody = {
-            Id: orderId,
             Conditions: $scope.entity.Reason,
             Status: 9
         }

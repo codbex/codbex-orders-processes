@@ -3,6 +3,7 @@ import { SalesOrderItemRepository as SalesOrderItemDao } from "codbex-orders/gen
 import { CustomerRepository as CustomerDao } from "codbex-partners/gen/codbex-partners/dao/Customers/CustomerRepository";
 
 import { Controller, Post, Get } from "sdk/http";
+import { Tasks } from 'sdk/bpm';
 
 @Controller
 class ReviewOrderService {
@@ -17,10 +18,12 @@ class ReviewOrderService {
         this.customerDao = new CustomerDao();
     }
 
-    @Get("/getOrder/:orderId")
-    public salesOrderData(ctx: any) {
+    @Get("/getOrder/:taskId")
+    public salesOrderData(_: any, ctx: any) {
 
-        const orderId = ctx.pathParameters.orderId;
+        const taskId = ctx.pathParameters.taskId;
+
+        const orderId = Tasks.getVariable(taskId, "orderId");
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
@@ -49,8 +52,12 @@ class ReviewOrderService {
         };
     }
 
-    @Post("/approveOrder")
-    public approveOrder(orderId: number) {
+    @Post("/approveOrder/:taskId")
+    public approveOrder(_: any, ctx: any) {
+
+        const taskId = ctx.pathParameters.taskId;
+
+        const orderId = Tasks.getVariable(taskId, "orderId");
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
@@ -69,14 +76,20 @@ class ReviewOrderService {
         });
 
         orderItems.forEach(item => {
-            item.Status = 2;
+            item.Status = 2; // Approved
             this.salesOrderItemDao.update(item);
         });
 
+        Tasks.setVariable(taskId, "status", "Approved");
+        Tasks.complete(taskId);
     }
 
-    @Post("/rejectOrder")
-    public rejectOrder(orderId: number) {
+    @Post("/rejectOrder/:taskId")
+    public rejectOrder(_: any, ctx: any) {
+
+        const taskId = ctx.pathParameters.taskId;
+
+        const orderId = Tasks.getVariable(taskId, "orderId");
 
         const salesOrders = this.salesOrderDao.findAll({
             $filter: {
@@ -95,9 +108,11 @@ class ReviewOrderService {
         });
 
         orderItems.forEach(item => {
-            item.Status = 6;
+            item.Status = 6; // Rejected
             this.salesOrderItemDao.update(item);
         });
 
+        Tasks.setVariable(taskId, "status", "Rejected");
+        Tasks.complete(taskId);
     }
 }
