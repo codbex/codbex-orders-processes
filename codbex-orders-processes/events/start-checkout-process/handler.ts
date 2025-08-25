@@ -11,7 +11,8 @@ export function onMessage(message: string) {
         if (entity.Status == 1) {
             Process.start('checkout-process', undefined, {
                 'orderId': entity.Id,
-                'status': "New"
+                'status': "New",
+                'delivery': entity.SentMethod == 2
             });
 
         }
