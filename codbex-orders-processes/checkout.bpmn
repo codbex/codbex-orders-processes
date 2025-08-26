@@ -94,10 +94,6 @@
     <sequenceFlow id="sid-A2DAE1B1-6FCE-4F9D-B34C-E949FE6529F1" sourceRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" targetRef="send-waiting-email">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ delivery == "false" }]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="sid-B0148703-C303-4217-AD5E-01638ABA4622" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-reject-email"/>
-    <sequenceFlow id="sid-067E1F93-138D-4F2E-8505-EE2E808C9E9C" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-approve-email">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ status == "Approved" }]]></conditionExpression>
-    </sequenceFlow>
     <subProcess id="cancel-order-subprocess" name="Cancel Order Subprocess" triggeredByEvent="true">
       <startEvent id="sid-1ADB616C-A37D-4C00-8DAD-5DB53E231BA3" isInterrupting="true">
         <messageEventDefinition messageRef="cancel-process"/>
@@ -120,6 +116,10 @@
     <sequenceFlow id="sid-4C10133C-57AE-40F7-891C-BC71B3C6189C" sourceRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" targetRef="send-paid-email"/>
     <sequenceFlow id="sid-31B74CDB-7BDB-40C9-AC07-E9C4AE3CACE9" sourceRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" targetRef="send-returned-email">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${status == "Returned" }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-B0148703-C303-4217-AD5E-01638ABA4622" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-reject-email"/>
+    <sequenceFlow id="sid-067E1F93-138D-4F2E-8505-EE2E808C9E9C" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-approve-email">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ status == "Approved" }]]></conditionExpression>
     </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_checkout-process">
@@ -259,8 +259,8 @@
         <omgdi:waypoint x="320.0" y="1259.0"/>
         <omgdi:waypoint x="930.0" y="1259.0"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="sid-31B74CDB-7BDB-40C9-AC07-E9C4AE3CACE9" id="BPMNEdge_sid-31B74CDB-7BDB-40C9-AC07-E9C4AE3CACE9" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="1.0">
-        <omgdi:waypoint x="625.0" y="894.9458437504227"/>
+      <bpmndi:BPMNEdge bpmnElement="sid-31B74CDB-7BDB-40C9-AC07-E9C4AE3CACE9" id="BPMNEdge_sid-31B74CDB-7BDB-40C9-AC07-E9C4AE3CACE9" flowable:sourceDockerX="20.0" flowable:sourceDockerY="20.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">
+        <omgdi:waypoint x="625.0" y="894.9464247314957"/>
         <omgdi:waypoint x="625.0" y="1113.9000244140625"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="sid-D8686964-86C6-4707-9901-6B200563FD04" id="BPMNEdge_sid-D8686964-86C6-4707-9901-6B200563FD04" flowable:sourceDockerX="50.0" flowable:sourceDockerY="40.0" flowable:targetDockerX="50.0" flowable:targetDockerY="40.0">

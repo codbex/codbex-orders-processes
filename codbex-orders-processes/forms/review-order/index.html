@@ -48,13 +48,13 @@
                     <tr bk-table-row hoverable="true">
                         <td bk-table-cell style="width: 33.33%;"><b>Order Date: </b>{{Order.Date | date: 'yyyy-MM-dd'}}</td>
                         <td bk-table-cell style="width: 33.33%;"><b>Phone: </b>{{Customer.Contact}}</td>
-                        <td bk-table-cell style="width: 33.33%;"><b>Sent method: </b>${sentMethod}</td>
+                        <td bk-table-cell style="width: 33.33%;"><b>Sent method: </b>{{Order.SentMethodName}}</td>
                     </tr>
                     <tr bk-table-row hoverable="true">
-                        <td bk-table-cell style="width: 33.33%;"><b>Status: </b>{{Order.Status}}</td>
+                        <td bk-table-cell style="width: 33.33%;"><b>Status: </b>{{Order.StatusName}}</td>
                         <td bk-table-cell style="width: 33.33%;"><b>Email: </b>{{Customer.Email}}
                         </td>
-                        <td bk-table-cell style="width: 33.33%;"><b>Total price: </b>${totalPrice}</td>
+                        <td bk-table-cell style="width: 33.33%;"><b>Total price: </b>{{Order.Total}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -71,9 +71,9 @@
                 </thead>
                 <tbody bk-table-body>
                     <tr bk-table-row hoverable="true" ng-repeat="next in OrderItems">
-                        <td bk-table-cell>{{next.Product}}</td>
+                        <td bk-table-cell>{{next.ItemName}}</td>
                         <td bk-table-cell>{{next.Quantity| number}}</td>
-                        <td bk-table-cell>{{next.UoM}}</td>
+                        <td bk-table-cell>{{next.BaseUnitName}}</td>
                         <td bk-table-cell>{{next.Price| number}}</td>
                         <td bk-table-cell>{{next.Quantity * next.Price | number}}</td>
                     </tr>

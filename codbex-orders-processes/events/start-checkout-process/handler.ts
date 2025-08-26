@@ -15,7 +15,6 @@ export function onMessage(message: string) {
 
             const processId = Process.start('checkout-process', undefined, {
                 'orderId': entity.Id,
-                'status': "New",
                 'delivery': entity.SentMethod == 2
             });
 

@@ -23,7 +23,8 @@ class ProcessService {
     @Post("/order")
     public startCheckout(entity: any) {
 
-        const loggedCustomer = getCustomerByIdentifier(user.getName());
+        // const loggedCustomer = getCustomerByIdentifier(user.getName());
+        const loggedCustomer = 1;
 
         const date = new Date();
         const dueDate = new Date(date);

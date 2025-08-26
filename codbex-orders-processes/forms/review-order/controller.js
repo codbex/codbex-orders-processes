@@ -28,7 +28,11 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
         });
 
     $scope.approveOrder = () => {
-        $http.post(approveOrderUrl)
+        $http.post(approveOrderUrl, {
+            Order: $scope.Order,
+            Customer: $scope.Customer,
+            OrderItems: $scope.OrderItems
+        })
             .then(response => {
                 if (response.status == 201) {
                 }
@@ -42,7 +46,12 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
     }
 
     $scope.rejectOrder = () => {
-        $http.post(rejectOrderUrl)
+        $http.post(rejectOrderUrl, {
+            Order: $scope.Order,
+            Customer: $scope.Customer,
+            OrderItems: $scope.OrderItems,
+            Reason: $scope.entity.Reason
+        })
             .then(response => {
                 if (response.status == 201) {
                 }
