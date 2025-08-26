@@ -1,5 +1,5 @@
 import { SalesOrderRepository as SalesOrderDao } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderRepository";
-import { ShippingProviderRepository as ShippingProviderDao } from "codbex-orders/gen/codbex-orders/dao/entities/ShippingProviderRepository";
+import { ShippingProviderRepository as ShippingProviderDao } from "codbex-orders/gen/codbex-orders/dao/Settings/ShippingProviderRepository";
 import { CustomerRepository as CustomerDao } from "codbex-partners/gen/codbex-partners/dao/Customers/CustomerRepository";
 
 import { Controller, Post, Get } from "sdk/http";
@@ -25,32 +25,24 @@ class ShipOrderService {
 
         const orderId = Tasks.getVariable(taskId, "orderId");
 
-        const salesOrders = this.salesOrderDao.findAll({
-            $filter: {
-                equals: {
-                    Id: orderId
-                }
-            }
-        });
+        const salesOrder = this.salesOrderDao.findById(orderId);
 
         const customers = this.customerDao.findAll({
             $filter: {
                 equals: {
-                    Id: salesOrders[0].Customer
+                    Id: salesOrder.Customer
                 }
             }
         });
 
         const shippingProviders = this.shippingDao.findAll()
-            .map(function (value) {
-                return {
-                    value: value.Id,
-                    text: value.Name
-                };
-            });
+            .map((value) => ({
+                value: value.Id,
+                text: value.Name
+            }));
 
         return {
-            Order: salesOrders[0],
+            Order: salesOrder,
             Customer: customers[0],
             ShippingProviders: shippingProviders
         };
