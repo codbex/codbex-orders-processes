@@ -18,4 +18,4 @@ const content = `
 Екипът на ${reviewBody.Order.StoreName} 
 `;
 
-sendMail(reviewBody.Customer.Email, subject, content);
+// sendMail(reviewBody.Customer.Email, subject, content);

@@ -8,19 +8,24 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
         "/services/ts/codbex-orders-processes/forms/finish-order/api/FinishOrderService.ts/payOrder/" + taskId;
     const returnOrder =
         "/services/ts/codbex-orders-processes/forms/finish-order/api/FinishOrderService.ts/returnOrder/" + taskId;
+    const getOrderUrl =
+        "/services/ts/codbex-orders-processes/forms/finish-order/api/FinishOrderService.ts/getOrder/" + taskId;
+
+    $http.get(getOrderUrl)
+        .then(response => {
+            $scope.Order = response.data.Order;
+            $scope.Customer = response.data.Customer;
+        })
+        .catch((error) => {
+            console.error("Error getting Sales Order data: ", error);
+            $scope.resetForm();
+        });
 
     $scope.payOrder = () => {
 
         $http.post(payOrder)
-            .then(response => {
-                if (response.status == 201) {
-                }
-                else {
-                    console.error("Error while finishing Sales Order: ", response.data);
-                }
-            })
             .catch((error) => {
-                console.error("Error while finishing Sales Order: ", error.data);
+                console.error("Error while paying Sales Order: ", error.data);
             });
 
     }
@@ -28,15 +33,8 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
     $scope.returnOrder = () => {
 
         $http.post(returnOrder)
-            .then(response => {
-                if (response.status == 201) {
-                }
-                else {
-                    console.error("Error while finishing Sales Order: ", response.data);
-                }
-            })
             .catch((error) => {
-                console.error("Error while finishing Sales Order: ", error.data);
+                console.error("Error while returning Sales Order: ", error.data);
             });
 
     }

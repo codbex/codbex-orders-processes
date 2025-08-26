@@ -17,4 +17,4 @@ const content = `
 Съгласно нашите условия, поръчката се счита за приключена.
 `;
 
-sendMail(sellerEmail, subject, content);
+// sendMail(sellerEmail, subject, content);

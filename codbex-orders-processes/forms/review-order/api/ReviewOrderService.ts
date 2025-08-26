@@ -113,10 +113,15 @@ class ReviewOrderService {
             this.salesOrderItemDao.update(item);
         });
 
-        Tasks.setVariable(taskId, "reviewBody", {
-            ...body,
-        });
+        const scheduledTime = new Date(body.Order.Due);
+
+        Tasks.setVariable(taskId, "Order", body.Order);
+        Tasks.setVariable(taskId, "Delivery", body.Order.SentMethodName);
+        Tasks.setVariable(taskId, "DueDate", scheduledTime.toISOString());
+        Tasks.setVariable(taskId, "Customer", body.Customer);
+        Tasks.setVariable(taskId, "OrderItems", body.OrderItems);
         Tasks.setVariable(taskId, "status", "Approved");
+
         Tasks.complete(taskId);
     }
 
@@ -148,10 +153,12 @@ class ReviewOrderService {
             this.salesOrderItemDao.update(item);
         });
 
-        Tasks.setVariable(taskId, "reviewBody", {
-            ...body
-        });
+        Tasks.setVariable(taskId, "Order", body.Order);
+        Tasks.setVariable(taskId, "Customer", body.Customer);
+        Tasks.setVariable(taskId, "OrderItems", body.OrderItems);
+        Tasks.setVariable(taskId, "Reason", body.Reason);
         Tasks.setVariable(taskId, "status", "Rejected");
+
         Tasks.complete(taskId);
     }
 }

@@ -22,4 +22,4 @@ const content = `
 Екипът на ${storeName}
 `;
 
-sendMail(customerEmail, subject, content);
+// sendMail(customerEmail, subject, content);

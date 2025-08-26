@@ -9,7 +9,7 @@ export function onMessage(message: string) {
         const entity = messageEvent.entity;
 
         if (entity.Status == 9) {
-            Process.correlateMessageEvent(entity.Process ?? "1", "cancel-order", new Map<string, any>([["event", true]]);
+            Process.correlateMessageEvent(entity.Process ?? "1", "cancel-order", new Map<string, any>([["event", true]]));
         }
     }
 }

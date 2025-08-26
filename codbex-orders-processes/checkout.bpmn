@@ -49,7 +49,6 @@
     </serviceTask>
     <exclusiveGateway id="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" flowable:async="true" default="sid-CBC60718-BBE1-48F3-93ED-28750C77E6AE"/>
     <sequenceFlow id="sid-CF3413F5-4E52-450C-BAE2-C77F7762B467" sourceRef="send-approve-email" targetRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8"/>
-    <sequenceFlow id="sid-D8686964-86C6-4707-9901-6B200563FD04" sourceRef="ship-order" targetRef="send-ship-email"/>
     <serviceTask id="send-waiting-email" name="Send Waiting Email" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
@@ -57,7 +56,6 @@
         </flowable:field>
       </extensionElements>
     </serviceTask>
-    <sequenceFlow id="sid-D552666B-6574-48A9-9A79-FF6600D57E54" sourceRef="send-ship-email" targetRef="finish-order"/>
     <serviceTask id="notify-seller" name="Notify Seller" flowable:async="true" flowable:delegateExpression="${JSTask}">
       <extensionElements>
         <flowable:field name="handler">
@@ -86,14 +84,10 @@
     <sequenceFlow id="sid-E2453B98-AA02-4E4B-82D7-0DECFBA82D10" sourceRef="send-timeout-email" targetRef="end-event"/>
     <boundaryEvent id="sid-A0DBE1B4-0F46-4952-BFEE-4E04227AFEFB" attachedToRef="finish-order" cancelActivity="true">
       <timerEventDefinition>
-        <timeDate>{ dueDate }</timeDate>
+        <timeDate>${ DueDate }</timeDate>
       </timerEventDefinition>
     </boundaryEvent>
     <sequenceFlow id="sid-4187F9B3-1A3C-4B4D-BDA1-C2B0640CE1A8" sourceRef="send-waiting-email" targetRef="finish-order"/>
-    <sequenceFlow id="sid-CBC60718-BBE1-48F3-93ED-28750C77E6AE" sourceRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" targetRef="ship-order"/>
-    <sequenceFlow id="sid-A2DAE1B1-6FCE-4F9D-B34C-E949FE6529F1" sourceRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" targetRef="send-waiting-email">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ delivery == "false" }]]></conditionExpression>
-    </sequenceFlow>
     <subProcess id="cancel-order-subprocess" name="Cancel Order Subprocess" triggeredByEvent="true">
       <startEvent id="sid-1ADB616C-A37D-4C00-8DAD-5DB53E231BA3" isInterrupting="true">
         <messageEventDefinition messageRef="cancel-process"/>
@@ -111,15 +105,21 @@
       <sequenceFlow id="sid-F0E2A4B5-ED65-4B21-A4DC-3B170013638C" sourceRef="sid-1ADB616C-A37D-4C00-8DAD-5DB53E231BA3" targetRef="send-cancel-email"/>
       <sequenceFlow id="sid-EEBB11E4-72E7-4626-98F9-ECBD4C5203DF" sourceRef="send-cancel-email" targetRef="sid-CE4CA2A3-BC21-4E74-A60F-7BCE2F5003ED"/>
     </subProcess>
-    <sequenceFlow id="sid-F7BDE914-F27A-4E1A-A8B5-C4ED0DB34694" sourceRef="finish-order" targetRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202"/>
-    <sequenceFlow id="sid-56C59576-CEA6-429D-816C-69D4823ED4EA" sourceRef="sid-A0DBE1B4-0F46-4952-BFEE-4E04227AFEFB" targetRef="timeout-order"/>
-    <sequenceFlow id="sid-4C10133C-57AE-40F7-891C-BC71B3C6189C" sourceRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" targetRef="send-paid-email"/>
-    <sequenceFlow id="sid-31B74CDB-7BDB-40C9-AC07-E9C4AE3CACE9" sourceRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" targetRef="send-returned-email">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${status == "Returned" }]]></conditionExpression>
-    </sequenceFlow>
     <sequenceFlow id="sid-B0148703-C303-4217-AD5E-01638ABA4622" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-reject-email"/>
     <sequenceFlow id="sid-067E1F93-138D-4F2E-8505-EE2E808C9E9C" sourceRef="sid-A8EBEABC-7F98-46CB-BF40-24A6B6BADCD8" targetRef="send-approve-email">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ status == "Approved" }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-D8686964-86C6-4707-9901-6B200563FD04" sourceRef="ship-order" targetRef="send-ship-email"/>
+    <sequenceFlow id="sid-D552666B-6574-48A9-9A79-FF6600D57E54" sourceRef="send-ship-email" targetRef="finish-order"/>
+    <sequenceFlow id="sid-56C59576-CEA6-429D-816C-69D4823ED4EA" sourceRef="sid-A0DBE1B4-0F46-4952-BFEE-4E04227AFEFB" targetRef="timeout-order"/>
+    <sequenceFlow id="sid-F7BDE914-F27A-4E1A-A8B5-C4ED0DB34694" sourceRef="finish-order" targetRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202"/>
+    <sequenceFlow id="sid-CBC60718-BBE1-48F3-93ED-28750C77E6AE" sourceRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" targetRef="ship-order"/>
+    <sequenceFlow id="sid-A2DAE1B1-6FCE-4F9D-B34C-E949FE6529F1" sourceRef="sid-4B720F34-C6DA-43ED-98CC-BB765D2590D8" targetRef="send-waiting-email">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ Delivery != "Delivery" }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="sid-4C10133C-57AE-40F7-891C-BC71B3C6189C" sourceRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" targetRef="send-paid-email"/>
+    <sequenceFlow id="sid-31B74CDB-7BDB-40C9-AC07-E9C4AE3CACE9" sourceRef="sid-CCAF2B8E-9EF2-4856-92F6-95E47CFB8202" targetRef="send-returned-email">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${ IsReturned == "true" }]]></conditionExpression>
     </sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_checkout-process">

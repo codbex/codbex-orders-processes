@@ -14,8 +14,7 @@ export function onMessage(message: string) {
         if (entity.Status == 1 && salesOrder.Process == undefined) {
 
             const processId = Process.start('checkout-process', undefined, {
-                'orderId': entity.Id,
-                'delivery': entity.SentMethod == 2
+                'orderId': entity.Id
             });
 
             salesOrder.Process = processId;

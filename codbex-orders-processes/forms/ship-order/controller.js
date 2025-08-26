@@ -10,15 +10,15 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
     };
 
     const shipOrderUrl =
-        "/services/ts/codbex-orders-processes/forms/review-order/api/ShipOrderService.ts/shipOrder/" + taskId;
+        "/services/ts/codbex-orders-processes/forms/ship-order/api/ShipOrderService.ts/shipOrder/" + taskId;
     const getOrderUrl =
-        "/services/ts/codbex-orders-processes/forms/review-order/api/ShipOrderService.ts/getOrder/" + taskId;
+        "/services/ts/codbex-orders-processes/forms/ship-order/api/ShipOrderService.ts/getOrder/" + taskId;
 
     $http.get(getOrderUrl)
         .then(response => {
             $scope.Order = response.data.Order;
             $scope.Customer = response.data.Customer;
-            $scope.ShippingProviders = response.data.ShippingProviders;
+            $scope.ShippingProviderOptions = response.data.ShippingProviders;
         })
         .catch((error) => {
             console.error("Error getting Sales Order data: ", error);
@@ -27,13 +27,6 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
 
     $scope.shipOrder = () => {
         $http.post(shipOrderUrl)
-            .then(response => {
-                if (response.status == 201) {
-                }
-                else {
-                    console.error("Error while shipping Sales Order: ", response.data);
-                }
-            })
             .catch((error) => {
                 console.error("Error while shipping Sales Order: ", error.data);
             });

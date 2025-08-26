@@ -1,7 +1,7 @@
 import { SalesOrderRepository as SalesOrderDao } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderRepository";
 import { SalesOrderItemRepository as SalesOrderItemDao } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderItemRepository";
 
-import { Controller, Post } from "sdk/http";
+import { Controller, Post, Get } from "sdk/http";
 import { Tasks } from 'sdk/bpm';
 
 @Controller
@@ -13,6 +13,16 @@ class FinishOrderService {
     constructor() {
         this.salesOrderDao = new SalesOrderDao();
         this.salesOrderItemDao = new SalesOrderItemDao();
+    }
+
+    @Get("/getOrder/:taskId")
+    public salesOrderData(_: any, ctx: any) {
+        const taskId = ctx.pathParameters.taskId;
+
+        return {
+            Order: Tasks.getVariable(taskId, "Order"),
+            Customer: Tasks.getVariable(taskId, "Customer")
+        };
     }
 
     @Post("/payOrder/:taskId")
@@ -43,7 +53,7 @@ class FinishOrderService {
             this.salesOrderItemDao.update(item);
         });
 
-        Tasks.setVariable(taskId, "status", "Paid");
+        Tasks.setVariable(taskId, "IsReturned", "false");
         Tasks.complete(taskId);
     }
 
@@ -75,7 +85,7 @@ class FinishOrderService {
             this.salesOrderItemDao.update(item);
         });
 
-        Tasks.setVariable(taskId, "status", "Returned");
+        Tasks.setVariable(taskId, "IsReturned", "true");
         Tasks.complete(taskId);
     }
 
