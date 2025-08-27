@@ -1,6 +1,0 @@
-{
-    "name": "codbex-orders-SalesOrder-SalesOrder",
-    "kind": "T",
-    "handler": "codbex-orders-processes/events/start-cancel-order-process/handler.ts",
-    "description": "Start Cancel Order Process - Event"
-}
