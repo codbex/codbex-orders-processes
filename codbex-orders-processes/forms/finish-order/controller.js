@@ -15,27 +15,23 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
         .then(response => {
             $scope.Order = response.data.Order;
             $scope.Customer = response.data.Customer;
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.error("Error getting Sales Order data: ", error);
             $scope.resetForm();
         });
 
     $scope.payOrder = () => {
-
         $http.post(payOrder)
             .catch((error) => {
                 console.error("Error while paying Sales Order: ", error.data);
             });
-
     }
 
     $scope.returnOrder = () => {
-
         $http.post(returnOrder)
             .catch((error) => {
                 console.error("Error while returning Sales Order: ", error.data);
             });
-
     }
+
 });

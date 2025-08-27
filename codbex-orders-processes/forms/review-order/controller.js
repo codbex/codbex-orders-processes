@@ -24,7 +24,6 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
         })
         .catch((error) => {
             console.error("Error getting Sales Order data: ", error);
-            $scope.resetForm();
         });
 
     $scope.approveOrder = () => {
@@ -32,17 +31,9 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
             Order: $scope.Order,
             Customer: $scope.Customer,
             OrderItems: $scope.OrderItems
-        })
-            .then(response => {
-                if (response.status == 201) {
-                }
-                else {
-                    console.error("Error while approving Sales Order: ", response.data);
-                }
-            })
-            .catch((error) => {
-                console.error("Error while approving Sales Order: ", error.data);
-            });
+        }).catch((error) => {
+            console.error("Error while approving Sales Order: ", error.data);
+        });
     }
 
     $scope.rejectOrder = () => {
@@ -51,20 +42,9 @@ angular.module('templateApp', ['blimpKit', 'platformView']).controller('template
             Customer: $scope.Customer,
             OrderItems: $scope.OrderItems,
             Reason: $scope.entity.Reason
-        })
-            .then(response => {
-                if (response.status == 201) {
-                }
-                else {
-                    console.error("Error while rejecting Sales Order: ", response.data);
-                }
-            })
-            .catch((error) => {
-                console.error("Error while rejecting Sales Order: ", error.data);
-            });
+        }).catch((error) => {
+            console.error("Error while rejecting Sales Order: ", error.data);
+        });
     }
 
-    $scope.resetForm = () => {
-        $scope.entity = {};
-    };
 });
