@@ -21,5 +21,6 @@ export enum SalesOrderItemStatus {
     Canceled,
     Rejected,
     Returned,
-    Approved
+    Approved,
+    Expired
 }
