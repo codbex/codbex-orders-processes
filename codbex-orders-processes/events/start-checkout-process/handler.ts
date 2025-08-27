@@ -1,6 +1,6 @@
 import { SalesOrderEntityEvent, SalesOrderUpdateEntityEvent, SalesOrderRepository } from 'codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderRepository';
 import { Process } from "sdk/bpm";
-import { SalesOrderStatus } from '../types/Types';
+import { SalesOrderStatus } from '../../types/Types';
 
 
 export function onMessage(message: string) {

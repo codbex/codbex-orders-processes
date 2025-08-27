@@ -75,7 +75,7 @@ class ProcessService {
         const newOrder = this.salesOrderDao.findById(savedOrder);
 
         if (newOrder) {
-            newOrder.Status = SalesOrderStatus.New // New
+            newOrder.Status = SalesOrderStatus.New
             this.salesOrderDao.update(newOrder);
 
             response.setStatus(response.CREATED);
