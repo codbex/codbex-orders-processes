@@ -38,8 +38,7 @@ angular.module('templateApp', ['blimpKit', 'platformView', 'platformDialogs'])
             $http.post(approveOrderUrl, {
                 Order: $scope.Order,
                 Customer: $scope.Customer,
-                OrderItems: $scope.OrderItems,
-                Reason: $scope.entity.Reason
+                OrderItems: $scope.OrderItems
             })
                 .then(() => {
                     Dialogs.showAlert({
