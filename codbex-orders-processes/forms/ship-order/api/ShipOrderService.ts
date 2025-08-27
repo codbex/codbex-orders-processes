@@ -3,6 +3,7 @@ import { ShippingProviderRepository as ShippingProviderDao } from "codbex-orders
 
 import { Controller, Post, Get } from "sdk/http";
 import { Tasks } from 'sdk/bpm';
+import { SalesOrderStatus } from '../../../types/Types';
 
 @Controller
 class ShipOrderService {
@@ -42,7 +43,7 @@ class ShipOrderService {
         const salesOrder = this.salesOrderDao.findById(orderId);
         const currentSalesOrder = {
             ...salesOrder,
-            Status: 7,
+            Status: SalesOrderStatus.Shipped,
             ShippingProvider: body.shippingProvider,
             TrackingNumber: body.trackingNumber
         };

@@ -9,6 +9,7 @@ import { StoreRepository as StoreDao } from "codbex-inventory/gen/codbex-invento
 
 import { Controller, Post, Get } from "sdk/http";
 import { Tasks } from 'sdk/bpm';
+import { SalesOrderStatus, SalesOrderItemStatus } from '../../../types/Types';
 
 @Controller
 class ReviewOrderService {
@@ -100,7 +101,7 @@ class ReviewOrderService {
             }
         });
 
-        salesOrders[0].Status = 2;
+        salesOrders[0].Status = SalesOrderStatus.Approved;
 
         this.salesOrderDao.update(salesOrders[0]);
 
@@ -109,7 +110,7 @@ class ReviewOrderService {
         });
 
         orderItems.forEach(item => {
-            item.Status = 2; // Approved
+            item.Status = SalesOrderItemStatus.Approved;
             this.salesOrderItemDao.update(item);
         });
 
@@ -140,7 +141,7 @@ class ReviewOrderService {
             }
         });
 
-        salesOrders[0].Status = 3;
+        salesOrders[0].Status = SalesOrderStatus.Rejected;
 
         this.salesOrderDao.update(salesOrders[0]);
 
@@ -149,7 +150,7 @@ class ReviewOrderService {
         });
 
         orderItems.forEach(item => {
-            item.Status = 6; // Rejected
+            item.Status = SalesOrderItemStatus.Rejected;
             this.salesOrderItemDao.update(item);
         });
 

@@ -1,5 +1,7 @@
 import { SalesOrderEntityEvent, SalesOrderUpdateEntityEvent, SalesOrderRepository } from 'codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderRepository';
 import { Process } from "sdk/bpm";
+import { SalesOrderStatus } from '../types/Types';
+
 
 export function onMessage(message: string) {
 
@@ -11,7 +13,7 @@ export function onMessage(message: string) {
         const entity = messageEvent.entity;
         const salesOrder = salesOrderRepository.findById(entity.Id);
 
-        if (entity.Status == 1 && salesOrder.Process == undefined) {
+        if (entity.Status == SalesOrderStatus.New && salesOrder.Process == undefined) {
 
             const processId = Process.start('checkout-process', undefined, {
                 'orderId': entity.Id

@@ -3,6 +3,7 @@ import { SalesOrderItemRepository as SalesOrderItemDao } from "codbex-orders/gen
 
 import { Controller, Post, Get } from "sdk/http";
 import { Tasks } from 'sdk/bpm';
+import { SalesOrderStatus, SalesOrderItemStatus } from '../../../types/Types';
 
 @Controller
 class FinishOrderService {
@@ -40,7 +41,7 @@ class FinishOrderService {
             }
         });
 
-        salesOrders[0].Status = 6;
+        salesOrders[0].Status = SalesOrderStatus.Paid;
 
         this.salesOrderDao.update(salesOrders[0]);
 
@@ -49,7 +50,7 @@ class FinishOrderService {
         });
 
         orderItems.forEach(item => {
-            item.Status = 4;
+            item.Status = SalesOrderItemStatus.Delivered;
             this.salesOrderItemDao.update(item);
         });
 
@@ -72,7 +73,7 @@ class FinishOrderService {
             }
         });
 
-        salesOrders[0].Status = 8;
+        salesOrders[0].Status = SalesOrderStatus.Returned;
 
         this.salesOrderDao.update(salesOrders[0]);
 
@@ -81,7 +82,7 @@ class FinishOrderService {
         });
 
         orderItems.forEach(item => {
-            item.Status = 7;
+            item.Status = SalesOrderItemStatus.Returned;
             this.salesOrderItemDao.update(item);
         });
 

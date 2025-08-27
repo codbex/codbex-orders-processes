@@ -8,6 +8,7 @@ import { ProductRepository } from "codbex-products/gen/codbex-products/dao/Produ
 import { Controller, Post, response } from "sdk/http";
 import { user } from 'sdk/security';
 import { query, sql } from 'sdk/db';
+import { SalesOrderStatus, SalesOrderItemStatus } from '../types/Types';
 
 @Controller
 class ProcessService {
@@ -55,7 +56,7 @@ class ProcessService {
             Currency: 2,
             Conditions: entity.notes,
             SentMethod: sentMethod[0].Id,
-            Status: 12, // Initial
+            Status: SalesOrderStatus.Initial,
             Operator: 1,
             Company: 1,
             Store: 1
@@ -74,7 +75,7 @@ class ProcessService {
         const newOrder = this.salesOrderDao.findById(savedOrder);
 
         if (newOrder) {
-            newOrder.Status = 1 // New
+            newOrder.Status = SalesOrderStatus.New // New
             this.salesOrderDao.update(newOrder);
 
             response.setStatus(response.CREATED);
@@ -108,7 +109,7 @@ class ProcessService {
             VATRate: 20,
             SalesOrder: orderId,
             UoM: product[0].BaseUnit,
-            Status: 1
+            Status: SalesOrderItemStatus.New
         }
 
         return salesOrderItem;
