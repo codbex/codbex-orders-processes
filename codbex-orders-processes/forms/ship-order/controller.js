@@ -22,7 +22,8 @@ angular.module('templateApp', ['blimpKit', 'platformView', 'platformDialogs'])
                 $scope.Order = response.data.Order;
                 $scope.Customer = response.data.Customer;
                 $scope.ShippingProviderOptions = response.data.ShippingProviders;
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 console.error("Error getting Sales Order data: ", error);
                 Dialogs.showAlert({
                     title: 'Error while getting data',
@@ -35,16 +36,16 @@ angular.module('templateApp', ['blimpKit', 'platformView', 'platformDialogs'])
             $http.post(shipOrderUrl)
                 .then(() => {
                     Dialogs.showAlert({
-                        title: 'Successful shipped order',
-                        message: "Sales order is shipped successfully!",
+                        title: 'Successful Ship',
+                        message: "The sales order has been shipped successfully.",
                         type: AlertTypes.Success
                     });
                 })
                 .catch((error) => {
                     console.error("Error while shipping Sales Order: ", error.data);
                     Dialogs.showAlert({
-                        title: 'Unsuccessful shipped order',
-                        message: "Sales order is shipped unsuccessfully!",
+                        title: 'Ship Error',
+                        message: "There was an issue processing the sales order shipping.",
                         type: AlertTypes.Error
                     });
                 });
