@@ -17,7 +17,8 @@ export function onMessage(message: string) {
             if (entity.Status == SalesOrderStatus.New && salesOrder.Process == undefined) {
 
                 const processId = Process.start('checkout-process', undefined, {
-                    'orderId': entity.Id
+                    'orderId': entity.Id,
+                    "Order": entity
                 });
 
                 salesOrder.Process = processId;
@@ -26,7 +27,7 @@ export function onMessage(message: string) {
             else {
                 if (entity.Status == SalesOrderStatus.Canceled) {
                     console.log("Cancel entity: ", JSON.stringify(entity));
-                    Process.correlateMessageEvent(entity.Process ?? "1", "cancel-order", new Map<string, any>([["event", true]]));
+                    Process.correlateMessageEvent(entity.Process ?? "1", "cancel-process", new Map<string, any>([["event", true]]));
                 }
             }
         }
