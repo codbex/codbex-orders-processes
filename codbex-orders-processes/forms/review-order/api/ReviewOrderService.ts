@@ -70,12 +70,16 @@ class ReviewOrderService {
                 }
             })
 
+            const store = this.storeDao.findById(salesOrders[0].Store);
+
             return {
                 Order: {
                     ...salesOrders[0],
                     StatusName: this.orderStatusDao.findById(salesOrders[0].Status).Name,
                     SentMethodName: this.sentMethodDao.findById(salesOrders[0].SentMethod).Name,
-                    StoreName: this.storeDao.findById(salesOrders[0].Store).Name
+                    StoreName: store.Name,
+                    StoreAddress: store.Address,
+                    StoreEmail: store.Email,
                 },
                 Customer: customers[0],
                 OrderItems: fullOrderItems

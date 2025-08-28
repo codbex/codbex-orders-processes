@@ -33,7 +33,13 @@ angular.module('templateApp', ['blimpKit', 'platformView', 'platformDialogs'])
             });
 
         $scope.shipOrder = () => {
-            $http.post(shipOrderUrl)
+            console.log("Entity: ", JSON.stringify($scope.entity));
+            console.log("ship: ", $scope.entity.shippingProvider);
+            console.log("track: ", $scope.entity.trackingNumber);
+            $http.post(shipOrderUrl, {
+                ShippingProvider: $scope.entity.shippingProvider,
+                TrackingNumber: $scope.entity.trackingNumber
+            })
                 .then(() => {
                     Dialogs.showAlert({
                         title: 'Successful Ship',

@@ -3,22 +3,22 @@ import { sendMail } from "codbex-orders-processes/utils/mail-utils";
 
 const executionContext = Process.getExecutionContext();
 
-const orderId = executionContext.getVariable('order');
-const storeName = executionContext.getVariable('storeName');
-const customerName = executionContext.getVariable('customerName');
-const customerEmail = executionContext.getVariable('customerEmail');
+const order = executionContext.getVariable('Order');
+const customer = executionContext.getVariable('Customer');
 
 const subject = `Успешно платена поръчка`;
 
 const content = `
-Уважаеми/а ${customerName},
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+Уважаеми/а ${customer.Name},<br><br>
 
-Плащането за Вашата поръчка с номер #${orderId} беше успешно получено. Благодарим Ви, че избрахте ${storeName}!
-Оценяваме доверието Ви и сме благодарни, че сте наш клиент.
-Ако имате въпроси относно поръчката си, не се колебайте да се свържете с нас.
+Плащането за Вашата поръчка с номер #${order.Number} беше успешно получено. Благодарим Ви, че избрахте ${order.StoreName}!<br>
+Оценяваме доверието Ви и сме благодарни, че сте наш клиент.<br>
+Ако имате въпроси относно поръчката си, не се колебайте да се свържете с нас.<br><br>
 
-С най-добри пожелания,
-Екипът на ${storeName} 
+С най-добри пожелания,<br>
+Екипът на ${order.StoreName}
+</meta>
 `;
 
-// sendMail(customerEmail, subject, content);
+sendMail(customer.Email, subject, content);

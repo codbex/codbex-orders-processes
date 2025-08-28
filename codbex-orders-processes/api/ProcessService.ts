@@ -29,7 +29,8 @@ class ProcessService {
 
         const date = new Date();
         const dueDate = new Date(date);
-        dueDate.setMonth(date.getMonth() + 1);
+        // dueDate.setMonth(date.getMonth() + 1);
+        dueDate.setMinutes(date.getMinutes() + 5);
 
         const sentMethod = this.sentMethodDao.findAll({
             $filter: {

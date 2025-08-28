@@ -34,7 +34,7 @@ class ShipOrderService {
     }
 
     @Post("shipOrder/:taskId")
-    public shipOrder(_: any, ctx: any, body: any) {
+    public shipOrder(body: any, ctx: any) {
 
         const taskId = ctx.pathParameters.taskId;
 
@@ -44,12 +44,19 @@ class ShipOrderService {
         const currentSalesOrder = {
             ...salesOrder,
             Status: SalesOrderStatus.Shipped,
-            ShippingProvider: body.shippingProvider,
-            TrackingNumber: body.trackingNumber
+            ShippingProvider: body.ShippingProvider,
+            TrackingNumber: body.TrackingNumber
         };
+
+        console.log("Shipping PR: ", body.ShippingProvider);
 
         this.salesOrderDao.update(currentSalesOrder);
 
+
+        const shippingProviderName = this.shippingDao.findById(body.ShippingProvider).Name;
+
+        Tasks.setVariable(taskId, "ShippingProviderName", shippingProviderName);
+        Tasks.setVariable(taskId, "TrackingNumber", body.TrackingNumber);
         Tasks.complete(taskId);
     }
 }
