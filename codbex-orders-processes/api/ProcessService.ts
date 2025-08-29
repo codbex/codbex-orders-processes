@@ -2,7 +2,6 @@ import { SentMethodRepository } from "codbex-methods/gen/codbex-methods/dao/Sett
 import { CustomerAddressRepository } from "codbex-partners/gen/codbex-partners/dao/Customers/CustomerAddressRepository";
 import { SalesOrderRepository } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderRepository";
 import { SalesOrderItemRepository, SalesOrderItemCreateEntity } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderItemRepository";
-import { CityRepository } from "codbex-cities/gen/codbex-cities/dao/Settings/CityRepository";
 
 import * as utils from "./ProcessUtilsService";
 import { SalesOrderStatus } from '../types/Types';
@@ -16,12 +15,10 @@ class ProcessService {
     private readonly sentMethodDao = new SentMethodRepository();
     private readonly customerAddressDao = new CustomerAddressRepository();
     private readonly salesOrderDao = new SalesOrderRepository();
-    private readonly cityDao = new CityRepository();
     private readonly salesOrderItemDao = new SalesOrderItemRepository();
 
     @Post("/order")
     public startCheckout(body: any) {
-
         const loggedCustomer = utils.getCustomerByIdentifier(user.getName());
 
         const date = new Date();
@@ -36,13 +33,14 @@ class ProcessService {
             }
         });
 
+
         if (sentMethod.length < 1) {
             response.setStatus(response.BAD_REQUEST);
             return "No sent method with that name exists!";
         }
 
-        const shippingAddress = utils.resolveAddress(body.shippingAddress, 1, this.cityDao, this.customerAddressDao);
-        const billingAddress = utils.resolveAddress(body.billingAddress, 2, this.cityDao, this.customerAddressDao);
+        const shippingAddress = utils.resolveAddress(body.shippingAddress, 1);
+        const billingAddress = utils.resolveAddress(body.billingAddress, 2);
 
         const savedOrder = this.salesOrderDao.create({
             Date: new Date(date.toISOString()),
@@ -75,11 +73,29 @@ class ProcessService {
             newOrder.Status = SalesOrderStatus.New
             this.salesOrderDao.update(newOrder);
 
-            response.setStatus(response.CREATED);
+            const billingAddress = this.customerAddressDao.findById(newOrder.BillingAddress);
+            const shippingAddress = this.customerAddressDao.findById(newOrder.ShippingAddress);
+
+            let mappedAddresses;
+            if (billingAddress && shippingAddress) {
+                mappedAddresses = utils.mapAddresses([billingAddress, shippingAddress]);
+            }
+
             return {
-                newOrder,
-                salesOrderItems
-            };
+                id: String(newOrder.Id),
+                paymentMethod: "Cash",
+                shippingType: utils.getSentMethodName(newOrder.SentMethod),
+                shippingAddress: mappedAddresses?.shippingAddress?.[0] ?? undefined,
+                billingAddress: mappedAddresses?.billingAddress[0] ?? undefined,
+                creationDate: newOrder.Date,
+                totalAmount: {
+                    amount: newOrder.Total,
+                    currency: utils.getCurrencyCode(newOrder.Currency)
+                },
+                status: utils.getSalesOrderStatus(newOrder.Status),
+                notes: newOrder.Conditions,
+                items: utils.getSalesOrderItems(savedOrder)
+            }
         }
     }
 }
