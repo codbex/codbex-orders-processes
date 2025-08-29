@@ -3,18 +3,18 @@ import { sendMail } from "codbex-orders-processes/utils/mail-utils";
 
 const executionContext = Process.getExecutionContext();
 
-const orderId = executionContext.getVariable('order');
-const sellerName = executionContext.getVariable('sellerName');
-const customerName = executionContext.getVariable('customerName');
-const sellerEmail = executionContext.getVariable('sellerEmail');
+const order = executionContext.getVariable('Order');
+const customer = executionContext.getVariable('Customer');
 
-const subject = `Поръчка #${orderId} приключена със статус "timeout"`;
+const subject = `Поръчка #${order.Number} приключена със статус "timeout"`;
 
 const content = `
-Уважаеми/а ${sellerName},
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+Здравейте!<br><br>
 
-Бихме искали да Ви уведомим, че поръчката с номер #${orderId}, направена от клиент ${customerName}, беше маркирана със статус timeout, тъй като клиентът не я взе в рамките на допустимия срок.
+Бихме искали да Ви уведомим, че поръчката с номер #${order.Number}, направена от клиент ${customer.Name}, беше маркирана със статус timeout, тъй като клиентът не я взе в рамките на допустимия срок.<br>
 Съгласно нашите условия, поръчката се счита за приключена.
+</meta>
 `;
 
-sendMail(sellerEmail, subject, content);
+sendMail(order.StoreEmail, subject, content);

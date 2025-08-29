@@ -3,22 +3,22 @@ import { sendMail } from "codbex-orders-processes/utils/mail-utils";
 
 const executionContext = Process.getExecutionContext();
 
-const orderId = executionContext.getVariable('order');
-const storeName = executionContext.getVariable('storeName');
-const customerName = executionContext.getVariable('customerName');
-const customerEmail = executionContext.getVariable('customerEmail');
+const order = executionContext.getVariable('Order');
+const customer = executionContext.getVariable('Customer');
 
-const subject = `Потвърждение за отказана поръчка #${orderId}`;
+const subject = `Потвърждение за отказана поръчка #${order.Number}`;
 
 const content = `
-Уважаеми/а ${customerName},
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+Уважаеми/а ${customer.Name},<br><br>
 
-Бихме искали да потвърдим, че Вашата поръчка с номер #${orderId} беше успешно отказана по Ваше желание.
-Ако това е било направено погрешка или желаете да направите нова поръчка, винаги сте добре дошли в ${storeName}.
-Благодарим Ви, че избрахте нас!
+Бихме искали да потвърдим, че Вашата поръчка с номер #${order.Number} беше успешно отказана по Ваше желание.<br>
+Ако това е било направено погрешка или желаете да направите нова поръчка, винаги сте добре дошли в ${order.StoreName}.<br>
+Благодарим Ви, че избрахте нас!<br><br>
 
-С уважение,
-Екипът на ${storeName}
+С уважение,<br>
+Екипът на ${order.StoreName}
+</meta>
 `;
 
-sendMail(customerEmail, subject, content);
+sendMail(customer.Email, subject, content);

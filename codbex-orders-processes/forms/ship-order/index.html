@@ -13,24 +13,23 @@
     </head>
 
     <body class="bk-vbox">
+        <bk-scrollbar class="bk-full-height bk-padding--lg">
 
-        <div class="fd-padding bk-pointer">
-            <h2 bk-title wrap="true" header-size="2" aria-label="title" align="center">Ship order</h2>
-        </div>
-
-        <bk-scrollbar class="bk-full-height bk-padding--sm">
+            <div class="fd-padding bk-pointer">
+                <h2 bk-title wrap="true" header-size="2" aria-label="title" align="center">Ship order</h2>
+            </div>
 
             <bk-fieldset class="fd-margin-bottom--md">
                 <bk-form-group>
                     <bk-form-item horizontal="false">
                         <bk-form-label for="shippingProvider-{{ $index }}" ng-required="true" colon="true">ShippingProvider</bk-form-label>
-                        <bk-combobox-input input-id="shippingProvider-{{ $index }}" ng-required="true" ng-model="entity.shippingProvider" dropdown-items="shippingProviderOptions" placeholder="Choose Shipping Provider ..."
+                        <bk-combobox-input input-id="shippingProvider-{{ $index }}" ng-required="true" ng-model="entity.shippingProvider" dropdown-items="ShippingProviderOptions" placeholder="Choose Shipping Provider ..."
                             btn-aria-label="show/hide Shipping Providers" list-aria-label="Assignee options"></bk-combobox-input>
                     </bk-form-item>
                     <bk-form-item>
                         <bk-form-label required for="trackingNumber">Tracking number:</bk-form-label>
                         <bk-input-group>
-                            <bk-input id="trackingNumber" type="text" placeholder="Enter Tracking Number"></bk-input>
+                            <bk-input id="trackingNumber" type="text" ng-model="entity.trackingNumber" placeholder="Enter Tracking Number"></bk-input>
                         </bk-input-group>
                     </bk-form-item>
                 </bk-form-group>
@@ -52,14 +51,15 @@
                     </tr>
                 </thead>
             </table>
-
-            <bk-bar class="bk-margin-top--md bk-padding--sm">
-                <bk-bar-right>
-                    <bk-button label="Ship" state="positive" ng-click="shipOrder()"></bk-button>
-                </bk-bar-right>
-            </bk-bar>
-
         </bk-scrollbar>
+
+        <bk-bar bar-design="footer" size="m_l">
+            <bk-bar-right>
+                <bk-button label="Ship" state="positive" compact="true" ng-click="shipOrder()"></bk-button>
+            </bk-bar-right>
+        </bk-bar>
+        <dialogs></dialogs>
+
         <theme></theme>
     </body>
 

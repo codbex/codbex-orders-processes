@@ -14,12 +14,11 @@
     </head>
 
     <body class="order-box">
-
-        <div class="fd-padding bk-pointer">
-            <h2 bk-title wrap="true" header-size="2" aria-label="title" align="center">Review order</h2>
-        </div>
-
         <bk-scrollbar class="bk-full-height bk-padding--sm">
+
+            <div class="fd-padding bk-pointer">
+                <h2 bk-title wrap="true" header-size="2" aria-label="title" align="center">Review order</h2>
+            </div>
 
             <bk-fieldset class="fd-margin-bottom--md" ng-form="forms.details">
                 <bk-form-group abel="{{formHeaders[action]}}" name="entityForm" transclude-classes="fd-container fd-form-layout-grid-container">
@@ -48,13 +47,13 @@
                     <tr bk-table-row hoverable="true">
                         <td bk-table-cell style="width: 33.33%;"><b>Order Date: </b>{{Order.Date | date: 'yyyy-MM-dd'}}</td>
                         <td bk-table-cell style="width: 33.33%;"><b>Phone: </b>{{Customer.Contact}}</td>
-                        <td bk-table-cell style="width: 33.33%;"><b>Sent method: </b>${sentMethod}</td>
+                        <td bk-table-cell style="width: 33.33%;"><b>Sent method: </b>{{Order.SentMethodName}}</td>
                     </tr>
                     <tr bk-table-row hoverable="true">
-                        <td bk-table-cell style="width: 33.33%;"><b>Status: </b>{{Order.Status}}</td>
+                        <td bk-table-cell style="width: 33.33%;"><b>Status: </b>{{Order.StatusName}}</td>
                         <td bk-table-cell style="width: 33.33%;"><b>Email: </b>{{Customer.Email}}
                         </td>
-                        <td bk-table-cell style="width: 33.33%;"><b>Total price: </b>${totalPrice}</td>
+                        <td bk-table-cell style="width: 33.33%;"><b>Total price: </b>{{Order.Total}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -65,17 +64,23 @@
                         <th bk-table-header-cell>Item</th>
                         <th bk-table-header-cell>Quantity</th>
                         <th bk-table-header-cell>Base unit</th>
+                        <th bk-table-header-cell>Net</th>
                         <th bk-table-header-cell>Price</th>
+                        <th bk-table-header-cell>VAT Rate</th>
+                        <th bk-table-header-cell>VAT</th>
                         <th bk-table-header-cell>Total</th>
                     </tr>
                 </thead>
                 <tbody bk-table-body>
                     <tr bk-table-row hoverable="true" ng-repeat="next in OrderItems">
-                        <td bk-table-cell>{{next.Product}}</td>
+                        <td bk-table-cell>{{next.ItemName}}</td>
                         <td bk-table-cell>{{next.Quantity| number}}</td>
-                        <td bk-table-cell>{{next.UoM}}</td>
+                        <td bk-table-cell>{{next.BaseUnitName}}</td>
+                        <td bk-table-cell>{{next.Net}}</td>
                         <td bk-table-cell>{{next.Price| number}}</td>
-                        <td bk-table-cell>{{next.Quantity * next.Price | number}}</td>
+                        <td bk-table-cell>{{next.VATRate}}</td>
+                        <td bk-table-cell>{{next.VAT}}</td>
+                        <td bk-table-cell>{{next.Gross}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -92,6 +97,7 @@
             </bk-bar-right>
         </bk-bar>
 
+        <dialogs></dialogs>
         <theme></theme>
     </body>
 

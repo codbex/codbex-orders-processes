@@ -3,23 +3,24 @@ import { sendMail } from "codbex-orders-processes/utils/mail-utils";
 
 const executionContext = Process.getExecutionContext();
 
-const orderId = executionContext.getVariable('order');
-const storeName = executionContext.getVariable('storeName');
-const customerName = executionContext.getVariable('customerName');
-const customerEmail = executionContext.getVariable('customerEmail');
+const order = executionContext.getVariable('Order');
+const customer = executionContext.getVariable('Customer');
+const shippingProviderName = executionContext.getVariable('ShippingProviderName');
 
 const subject = `Пратката беше върната`;
 
 const content = `
-Уважаеми/а ${customerName},
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+Уважаеми/а ${customer.Name},<br><br>
 
-Бихме искали да Ви уведомим, че поръчката Ви с номер #${orderId} беше върната обратно към нас от куриерската фирма, тъй като не беше взета в рамките на допустимия срок.
-Съжаляваме за неудобството и сме на разположение, ако желаете да направим повторно изпращане или имате въпроси относно следващите стъпки.
-Можете да се свържете с нашия екип, за да уточним как да процедираме с поръчката Ви.
-Благодарим Ви за разбирането и интереса към ${storeName}
+Бихме искали да Ви уведомим, че поръчката Ви с номер #${order.Number} беше върната обратно към нас от куриерската фирма ${shippingProviderName}.<br>
+Съжаляваме за неудобството и сме на разположение, ако желаете да направим повторно изпращане или имате въпроси относно следващите стъпки.<br>
+Можете да се свържете с нашия екип, за да уточним как да процедираме с поръчката Ви.<br>
+Благодарим Ви за разбирането и интереса към ${order.StoreName}<br><br>
 
-С уважение,
-Екипът на ${storeName}
+С уважение,<br>
+Екипът на ${order.StoreName}
+</meta>
 `;
 
-sendMail(customerEmail, subject, content);
+sendMail(customer.Email, subject, content);

@@ -3,26 +3,27 @@ import { sendMail } from "codbex-orders-processes/utils/mail-utils";
 
 const executionContext = Process.getExecutionContext();
 
-const orderId = executionContext.getVariable('order');
-const storeName = executionContext.getVariable('storeName');
-const customerName = executionContext.getVariable('customerName');
-const customerEmail = executionContext.getVariable('customerEmail');
-const storeAddress = executionContext.getVariable('storeAddress');
+const order = executionContext.getVariable('Order');
+const customer = executionContext.getVariable('Customer');
 
-const subject = `Поръчка #${orderId} е готова за получаване`;
+const subject = `Поръчка #${order.Number} е готова за получаване`;
 
 const content = `
-Уважаеми/а ${customerName},
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+Уважаеми/а ${customer.Name},<br><br>
 
-Бихме искали да Ви уведомим, че поръчката Ви с номер #${orderId} е готова и Ви очаква на адреса на нашия магазин:
-${storeAddress}
-Молим Ви да я вземете в рамките на допустимия срок, за да избегнем автоматичното ѝ анулиране.
-Ако имате нужда от допълнителна информация или съдействие, не се колебайте да се свържете с нас.
+Бихме искали да Ви уведомим, че поръчката Ви с номер #${order.Number} е готова и Ви очаква на адреса на нашия магазин:<br><br>
 
-Благодарим Ви, че избрахте ${storeName}!
+${order.StoreAddress}<br><br>
 
-С уважение,
- Екипът на ${storeName}
+Молим Ви да я вземете в рамките на допустимия срок, за да избегнем автоматичното ѝ анулиране.<br>
+Ако имате нужда от допълнителна информация или съдействие, не се колебайте да се свържете с нас.<br><br>
+
+Благодарим Ви, че избрахте ${order.StoreName}!<br><br>
+
+С уважение,<br>
+ Екипът на ${order.StoreName}
+ </meta>
 `;
 
-sendMail(customerEmail, subject, content);
+sendMail(customer.Email, subject, content);
