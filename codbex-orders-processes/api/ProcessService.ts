@@ -3,12 +3,12 @@ import { CustomerAddressRepository } from "codbex-partners/gen/codbex-partners/d
 import { SalesOrderRepository } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderRepository";
 import { SalesOrderItemRepository, SalesOrderItemCreateEntity } from "codbex-orders/gen/codbex-orders/dao/SalesOrder/SalesOrderItemRepository";
 import { CityRepository } from "codbex-cities/gen/codbex-cities/dao/Settings/CityRepository";
-import { ProductRepository } from "codbex-products/gen/codbex-products/dao/Products/ProductRepository";
 
+import * as utils from "./ProcessUtilsService";
+import { SalesOrderStatus } from '../types/Types';
 import { Controller, Post, response } from "sdk/http";
-import { user } from 'sdk/security';
-import { query, sql } from 'sdk/db';
-import { SalesOrderStatus, SalesOrderItemStatus } from '../types/Types';
+import { user } from "sdk/security";
+
 
 @Controller
 class ProcessService {
@@ -18,19 +18,15 @@ class ProcessService {
     private readonly salesOrderDao = new SalesOrderRepository();
     private readonly cityDao = new CityRepository();
     private readonly salesOrderItemDao = new SalesOrderItemRepository();
-    private readonly productDao = new ProductRepository();
-
 
     @Post("/order")
     public startCheckout(entity: any) {
 
-        // const loggedCustomer = getCustomerByIdentifier(user.getName());
-        const loggedCustomer = 1;
+        const loggedCustomer = utils.getCustomerByIdentifier(user.getName());
 
         const date = new Date();
         const dueDate = new Date(date);
-        // dueDate.setMonth(date.getMonth() + 1);
-        dueDate.setMinutes(date.getMinutes() + 5);
+        dueDate.setMonth(date.getMonth() + 1);
 
         const sentMethod = this.sentMethodDao.findAll({
             $filter: {
@@ -42,11 +38,11 @@ class ProcessService {
 
         if (sentMethod.length < 1) {
             response.setStatus(response.BAD_REQUEST);
-            return "No paymenth method with that name exists!";
+            return "No sent method with that name exists!";
         }
 
-        const shippingAddress = this.resolveAddress(entity.shippingAddress, 1, this.cityDao, this.customerAddressDao);
-        const billingAddress = this.resolveAddress(entity.billingAddress, 2, this.cityDao, this.customerAddressDao);
+        const shippingAddress = utils.resolveAddress(entity.shippingAddress, 1, this.cityDao, this.customerAddressDao);
+        const billingAddress = utils.resolveAddress(entity.billingAddress, 2, this.cityDao, this.customerAddressDao);
 
         const savedOrder = this.salesOrderDao.create({
             Date: new Date(date.toISOString()),
@@ -66,7 +62,7 @@ class ProcessService {
         const salesOrderItems: SalesOrderItemCreateEntity[] = [];
 
         entity.items.forEach((item: SalesOrderItemCreateEntity) => {
-            const soItem: SalesOrderItemCreateEntity = this.createSalesOrderItems(item, this.productDao, savedOrder);
+            const soItem: SalesOrderItemCreateEntity = utils.createSalesOrderItems(item, savedOrder);
 
             salesOrderItems.push(soItem);
 
@@ -86,93 +82,4 @@ class ProcessService {
             };
         }
     }
-
-    private createSalesOrderItems(item: any, productDao: ProductRepository, orderId: number) {
-
-        const product = productDao.findAll({
-            $filter: {
-                equals: {
-                    Id: item.productId
-                }
-            }
-        });
-
-        if (product.length < 1) {
-            response.setStatus(response.BAD_REQUEST);
-            return `No such product with Id: ${item.productId}!`;
-        }
-
-        const salesOrderItem: SalesOrderItemCreateEntity =
-        {
-            Product: Number(item.productId),
-            Quantity: item.quantity,
-            Price: product[0].Price | 0,
-            VATRate: 20,
-            SalesOrder: orderId,
-            UoM: product[0].BaseUnit,
-            Status: SalesOrderItemStatus.New
-        }
-
-        return salesOrderItem;
-    }
-
-    private resolveAddress(
-        address: any,
-        addressType: number,
-        cityDao: any,
-        customerAddressDao: any
-    ): number {
-        if (!address) return 0;
-
-        if (address.id) {
-            return address.id;
-        }
-
-        const {
-            country,
-            addressLine1,
-            addressLine2,
-            city,
-            postalCode,
-        } = address;
-
-        const cityEntity = cityDao.findAll({
-            $filter: {
-                equals: {
-                    Name: city
-                }
-            }
-        });
-
-        if (!cityEntity?.[0]?.Id) {
-            throw new Error(`City not found: ${city}`);
-        }
-
-        const newAddress = customerAddressDao.create({
-            Customer: getCustomerByIdentifier(user.getName()),
-            Country: country,
-            City: cityEntity[0].Id,
-            AddressLine1: addressLine1,
-            AddressLine2: addressLine2 ?? null,
-            PostalCode: postalCode,
-            AddressType: addressType,
-            IsActive: false
-        });
-
-        return newAddress;
-    }
-}
-
-function getCustomerByIdentifier(identifier: string) {
-
-    const customerQuery = sql.getDialect()
-        .select()
-        .column('CUSTOMER_ID')
-        .from('CODBEX_CUSTOMER')
-        .where('CUSTOMER_IDENTIFIER = ?')
-        .build();
-
-    const queryResult = query.execute(customerQuery, [identifier]);
-
-    return queryResult[0];
 }
