@@ -20,7 +20,7 @@ class ProcessService {
     private readonly salesOrderItemDao = new SalesOrderItemRepository();
 
     @Post("/order")
-    public startCheckout(entity: any) {
+    public startCheckout(body: any) {
 
         const loggedCustomer = utils.getCustomerByIdentifier(user.getName());
 
@@ -31,7 +31,7 @@ class ProcessService {
         const sentMethod = this.sentMethodDao.findAll({
             $filter: {
                 equals: {
-                    Name: entity.shippingType
+                    Name: body.shippingType
                 }
             }
         });
@@ -41,8 +41,8 @@ class ProcessService {
             return "No sent method with that name exists!";
         }
 
-        const shippingAddress = utils.resolveAddress(entity.shippingAddress, 1, this.cityDao, this.customerAddressDao);
-        const billingAddress = utils.resolveAddress(entity.billingAddress, 2, this.cityDao, this.customerAddressDao);
+        const shippingAddress = utils.resolveAddress(body.shippingAddress, 1, this.cityDao, this.customerAddressDao);
+        const billingAddress = utils.resolveAddress(body.billingAddress, 2, this.cityDao, this.customerAddressDao);
 
         const savedOrder = this.salesOrderDao.create({
             Date: new Date(date.toISOString()),
@@ -51,7 +51,7 @@ class ProcessService {
             BillingAddress: billingAddress,
             ShippingAddress: shippingAddress,
             Currency: 2,
-            Conditions: entity.notes,
+            Conditions: body.notes,
             SentMethod: sentMethod[0].Id,
             Status: SalesOrderStatus.Initial,
             Operator: 1,
@@ -61,7 +61,7 @@ class ProcessService {
 
         const salesOrderItems: SalesOrderItemCreateEntity[] = [];
 
-        entity.items.forEach((item: SalesOrderItemCreateEntity) => {
+        body.items.forEach((item: SalesOrderItemCreateEntity) => {
             const soItem: SalesOrderItemCreateEntity = utils.createSalesOrderItems(item, savedOrder);
 
             salesOrderItems.push(soItem);
