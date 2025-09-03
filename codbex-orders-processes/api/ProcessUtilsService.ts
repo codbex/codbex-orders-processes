@@ -1,6 +1,7 @@
 import { SalesOrderItemStatus } from '../types/Types';
 import { response } from "sdk/http";
 import { user } from "sdk/security";
+import { uuid } from "sdk/utils";
 
 import { CustomerAddressRepository } from "codbex-partners/gen/codbex-partners/dao/Customers/CustomerAddressRepository";
 import { CustomerRepository } from "codbex-partners/gen/codbex-partners/dao/Customers/CustomerRepository";
@@ -216,3 +217,26 @@ export function getCustomerByIdentifier(identifier: string) {
 
     return customer[0].Id;
 }
+
+export function createErrorResponse(
+    statusCode: number,
+    message: string,
+    originalError?: unknown
+) {
+    const errorId = uuid.random();
+
+    if (originalError) {
+        console.error(`Error occurred '${errorId}' :`, originalError);
+    } else {
+        console.error(`Error occurred '${errorId}' : ${message}`);
+    }
+
+    return {
+        errorType: String(statusCode),
+        errorMessage: message,
+        errorCauses: [
+            { errorMessage: `Please contact us providing the following error ID '${errorId}'` },
+        ],
+    };
+}
+
