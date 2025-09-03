@@ -21,9 +21,8 @@ class ProcessService {
     public startCheckout(body: any) {
         const loggedCustomer = utils.getCustomerByIdentifier(user.getName());
 
-        const date = new Date();
-        const dueDate = new Date(date);
-        dueDate.setMonth(date.getMonth() + 1);
+        const dueDate = new Date();
+        dueDate.setMonth(dueDate.getMonth() + 1);
 
         const sentMethod = this.sentMethodDao.findAll({
             $filter: {
@@ -32,7 +31,6 @@ class ProcessService {
                 }
             }
         });
-
 
         if (sentMethod.length < 1) {
             response.setStatus(response.BAD_REQUEST);
@@ -43,7 +41,6 @@ class ProcessService {
         const billingAddress = utils.resolveAddress(body.billingAddress, 2);
 
         const savedOrder = this.salesOrderDao.create({
-            Date: new Date(date.toISOString()),
             Due: new Date(dueDate.toISOString()),
             Customer: loggedCustomer,
             BillingAddress: billingAddress,
