@@ -54,15 +54,6 @@ class ProcessService {
             const shippingAddress = utils.resolveAddress(body.shippingAddress, 1);
             const billingAddress = utils.resolveAddress(body.billingAddress, 2);
 
-            if (!shippingAddress || !billingAddress) {
-                response.setStatus(response.UNPROCESSABLE_CONTENT);
-                return utils.createErrorResponse(
-                    response.UNPROCESSABLE_CONTENT,
-                    'Invalid Address',
-                    'Billing or shipping address could not be resolved'
-                );
-            }
-
             const savedOrder = this.salesOrderDao.create({
                 Due: new Date(dueDate.toISOString()),
                 Customer: loggedCustomer,
