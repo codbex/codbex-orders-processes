@@ -30,13 +30,9 @@ class ProcessService {
                     'No customer found with the given identifier'
                 );
             }
-
-            const date = new Date();
-            date.setMonth(date.getMonth() + 1)
-            const pgTimestamp = date.toISOString().replace('T', ' ').replace('Z', '');
-            console.log("time: ", pgTimestamp);
-
-            const dueDate = new Date(pgTimestamp);
+            
+            const dueDate = new Date();
+            dueDate.setMonth(dueDate.getMonth());
 
             const sentMethod = this.sentMethodDao.findAll({
                 $filter: {
