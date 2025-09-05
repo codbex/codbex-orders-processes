@@ -55,7 +55,7 @@ class ProcessService {
             const billingAddress = utils.resolveAddress(body.billingAddress, 2);
 
             const savedOrder = this.salesOrderDao.create({
-                Due: new Date(dueDate.toISOString()),
+                Due: new Date(dueDate.toLocaleDateString()),
                 Customer: loggedCustomer,
                 BillingAddress: billingAddress,
                 ShippingAddress: shippingAddress,
