@@ -30,9 +30,12 @@ class ProcessService {
                     'No customer found with the given identifier'
                 );
             }
+            var Timestamp = Java.type("java.sql.Timestamp");
             
             const dueDate = new Date();
-            dueDate.setMonth(dueDate.getMonth());
+            dueDate.setMonth(dueDate.getMonth() + 1);
+
+            const dueDateSql = new Timestamp(dueDateJs.getTime());
 
             const sentMethod = this.sentMethodDao.findAll({
                 $filter: {
@@ -55,7 +58,7 @@ class ProcessService {
             const billingAddress = utils.resolveAddress(body.billingAddress, 2);
 
             const savedOrder = this.salesOrderDao.create({
-                Due: dueDate,
+                Due: dueDateSql,
                 Customer: loggedCustomer,
                 BillingAddress: billingAddress,
                 ShippingAddress: shippingAddress,
