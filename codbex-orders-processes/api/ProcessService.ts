@@ -31,8 +31,12 @@ class ProcessService {
                 );
             }
 
-            const dueDate = new Date();
-            dueDate.setMonth(dueDate.getMonth() + 1);
+            const date = new Date();
+            date.setMonth(date.getMonth() + 1)
+            const pgTimestamp = date.toISOString().replace('T', ' ').replace('Z', '');
+            console.log("time: ", pgTimestamp);
+
+            const dueDate = new Date(pgTimestamp);
 
             const sentMethod = this.sentMethodDao.findAll({
                 $filter: {
@@ -55,7 +59,7 @@ class ProcessService {
             const billingAddress = utils.resolveAddress(body.billingAddress, 2);
 
             const savedOrder = this.salesOrderDao.create({
-                Due: new Date(dueDate.toLocaleDateString()),
+                Due: dueDate,
                 Customer: loggedCustomer,
                 BillingAddress: billingAddress,
                 ShippingAddress: shippingAddress,
