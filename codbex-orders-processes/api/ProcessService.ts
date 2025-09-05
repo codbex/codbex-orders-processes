@@ -35,7 +35,7 @@ class ProcessService {
             const dueDate = new Date();
             dueDate.setMonth(dueDate.getMonth() + 1);
 
-            const dueDateSql = new Timestamp(dueDateJs.getTime());
+            const dueDateSql = new Timestamp(dueDate.getTime());
 
             const sentMethod = this.sentMethodDao.findAll({
                 $filter: {
