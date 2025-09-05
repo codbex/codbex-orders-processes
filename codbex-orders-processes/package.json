@@ -1,6 +1,6 @@
 {
     "name": "@codbex/codbex-orders-processes",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "repository": {
         "url": "https://github.com/codbex/codbex-orders-processes.git",
         "type": "git"
