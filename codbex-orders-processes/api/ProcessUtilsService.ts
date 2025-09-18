@@ -196,8 +196,8 @@ export function createSalesOrderItems(item: any, orderId: number) {
     {
         Product: Number(item.productId),
         Quantity: item.quantity,
-        Price: productCampaign ? calculateGrossPrice(productCampaign.newPrice, product.VATRate) : calculateGrossPrice(product.Price, product.VATRate),
-        VATRate: 20,
+        Price: productCampaign ? productCampaign.newPrice : product.Price,
+        VATRate: product.VATRate,
         SalesOrder: orderId,
         UoM: product.BaseUnit,
         Status: SalesOrderItemStatus.New
