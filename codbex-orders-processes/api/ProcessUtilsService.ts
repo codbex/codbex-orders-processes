@@ -14,7 +14,8 @@ import { CurrencyRepository } from "codbex-currencies/gen/codbex-currencies/dao/
 import { ProductImageRepository } from "codbex-products/gen/codbex-products/dao/Products/ProductImageRepository";
 import { CountryRepository } from "codbex-countries/gen/codbex-countries/dao/Settings/CountryRepository";
 import { CityRepository } from "codbex-cities/gen/codbex-cities/dao/Settings/CityRepository";
-
+import { CampaignRepository } from "codbex-products/gen/codbex-products/dao/Campaigns/CampaignRepository";
+import { CampaignEntryRepository } from "codbex-products/gen/codbex-products/dao/Products/CampaignEntryRepository";
 
 const ProductDao = new ProductRepository();
 const CustomerDao = new CustomerRepository();
@@ -27,6 +28,57 @@ const ProductImageDao = new ProductImageRepository();
 const CountryDao = new CountryRepository();
 const CityDao = new CityRepository();
 const CustomerAddressDao = new CustomerAddressRepository();
+const CampaignDao = new CampaignRepository();
+const CampaignEntryDao = new CampaignEntryRepository();
+
+export function calculateGrossPrice(net: number | undefined, vatRate: number | undefined): number | undefined {
+    if (net === undefined || vatRate === undefined) {
+        return undefined;
+    }
+    return net * (1 + vatRate / 100);
+}
+
+export function getCampaign(productId: number) {
+
+    const products = CampaignEntryDao.findAll({
+        $filter: {
+            equals: {
+                Product: productId
+            }
+        }
+    });
+
+    if (products.length === 0) {
+        return null;
+    }
+
+    const campaignId = products[0].Campaign;
+    if (!campaignId) {
+        return null;
+    }
+
+    const campaigns = CampaignDao.findById(campaignId);
+
+    if (!campaigns) {
+        return null;
+    }
+
+    const startDate = new Date(campaigns.StartDate);
+    const endDate = new Date(campaigns.EndDate);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const isTodayInRange = today >= startDate && today <= endDate;
+
+    return isTodayInRange
+        ? {
+            oldPrice: products[0].OldPrice,
+            newPrice: products[0].NewPrice,
+            discountPercentage: products[0].Percent
+        }
+        : null;
+}
 
 export function getSentMethodName(sentMethodId: number) {
     return SentMethodDao.findById(sentMethodId)!.Name;
@@ -122,7 +174,7 @@ export function getSalesOrderItems(salesorderId: number) {
             title: product.Title,
             image: image[0].ImageLink,
             price: {
-                amount: product.Price,
+                amount: calculateGrossPrice(product.Price, product.VATRate),
                 currency: currency.Code,
             },
         }
@@ -138,12 +190,14 @@ export function createSalesOrderItems(item: any, orderId: number) {
         return `No such product with Id: ${item.productId}!`;
     }
 
+    const productCampaign = getCampaign(Number(item.productId));
+
     const salesOrderItem: SalesOrderItemCreateEntity =
     {
         Product: Number(item.productId),
         Quantity: item.quantity,
-        Price: product.Price | 0,
-        VATRate: 20,
+        Price: productCampaign ? productCampaign.newPrice : product.Price,
+        VATRate: product.VATRate,
         SalesOrder: orderId,
         UoM: product.BaseUnit,
         Status: SalesOrderItemStatus.New
